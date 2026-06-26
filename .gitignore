@@ -1,1 +1,4 @@
 obj/
+bin/*/*.exe
+bin/*/stdout.txt
+bin/*/stderr.txt
