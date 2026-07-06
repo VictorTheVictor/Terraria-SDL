@@ -734,7 +734,7 @@
 
 1783348976 c:\users\fujiwara\desktop\terraria\src\scene_type.h
 
-1783356579 source:c:\users\fujiwara\documents\github\terraria-sdl\src\main.c
+1783360334 source:c:\users\fujiwara\documents\github\terraria-sdl\src\main.c
 	<time.h>
 	<math.h>
 	<stdbool.h>
@@ -746,7 +746,7 @@
 	"scene_type.h"
 	"glob.h"
 
-1783284243 c:\users\fujiwara\documents\github\terraria-sdl\src\input_handling.h
+1783359799 c:\users\fujiwara\documents\github\terraria-sdl\src\input_handling.h
 	<SDL.h>
 	<stdbool.h>
 
@@ -758,7 +758,7 @@
 	"nearest_neighbor.h"
 	"entity.h"
 
-1783349139 c:\users\fujiwara\documents\github\terraria-sdl\src\glob.h
+1783357140 c:\users\fujiwara\documents\github\terraria-sdl\src\glob.h
 
 1783089418 c:\users\fujiwara\documents\github\terraria-sdl\src\texture.h
 	<SDL.h>
@@ -773,7 +773,7 @@
 	<SDL.h>
 	"glob.h"
 
-1783356466 c:\users\fujiwara\documents\github\terraria-sdl\src\entity.h
+1783359965 c:\users\fujiwara\documents\github\terraria-sdl\src\entity.h
 	<stdbool.h>
 	<stdio.h>
 	"item.h"

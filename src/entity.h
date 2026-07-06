@@ -10,7 +10,7 @@
 
 typedef struct Entity
 {
-	float x, y, dx, dy, ddx, ddy, width, height;
+	float x, y, dx, dy, ddx, ddy, max_dx, max_dy, width, height;
 	int uuid, health;
 	EntityType entity_type;
 	bool active;
@@ -88,7 +88,7 @@ void ECS_Deactivate(int ACTIVE_ECS_index)
 	ECS_Despawn(ACTIVE_ECS_index);
 }
 
-void ECS_Process_Movement()
+void ECS_Tick()
 {
 	for (int i = 0; i < MAX_ENTITY_POOL; i++)
 	{
@@ -96,6 +96,10 @@ void ECS_Process_Movement()
 		{
 			ACTIVE_ECS.entity[i].dx += ACTIVE_ECS.entity[i].ddx;
 			ACTIVE_ECS.entity[i].dy += ACTIVE_ECS.entity[i].ddy;
+			if(ACTIVE_ECS.entity[i].dx > ACTIVE_ECS.entity[i].max_dx) ACTIVE_ECS.entity[i].dx = ACTIVE_ECS.entity[i].max_dx;
+			if(ACTIVE_ECS.entity[i].dy > ACTIVE_ECS.entity[i].max_dy) ACTIVE_ECS.entity[i].dy = ACTIVE_ECS.entity[i].max_dy;
+			if(ACTIVE_ECS.entity[i].dx < -ACTIVE_ECS.entity[i].max_dx) ACTIVE_ECS.entity[i].dx = -ACTIVE_ECS.entity[i].max_dx;
+			if(ACTIVE_ECS.entity[i].dy < -ACTIVE_ECS.entity[i].max_dy) ACTIVE_ECS.entity[i].dy = -ACTIVE_ECS.entity[i].max_dy;
 			ACTIVE_ECS.entity[i].x += ACTIVE_ECS.entity[i].dx;
 			ACTIVE_ECS.entity[i].y += ACTIVE_ECS.entity[i].dy;
 		}

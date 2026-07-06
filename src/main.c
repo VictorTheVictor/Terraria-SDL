@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
 	screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0, SDL_ANYFORMAT);
 	/* adding a timer for 20 ms; 1000 ms / 20 ms -> 50 fps */
-	SDL_WM_SetCaption("Terraria", "Terraria");
+	SDL_WM_SetCaption("Pixelbuilder", "Pixelbuilder");
 	SDL_TimerID id = SDL_AddTimer(17, mytimer, NULL);
 
 	loadTextures();
@@ -127,17 +127,44 @@ int main(int argc, char *argv[])
 						mouseY = HEIGHT-event.button.y;
 						break;
 					case SDL_KEYDOWN:
-						processKeyRelease(event.key.keysym.sym);
+						processKeyPress(event.key.keysym.sym);
 						//sprintf(bufferThing, "Last key pressed: %d", event.key.keysym.sym);
 						break;
 					case SDL_KEYUP:
-						processKeyPress(event.key.keysym.sym);
+						processKeyRelease(event.key.keysym.sym);
 						break;
 					case SDL_USEREVENT:
-						//Physics
+						//Keyboard
+						TickKeyboard();
+						if (key_properties[MOVE_LEFT].triggered)
+						{
+							player->ddx = -1.0f;
+							player->max_dx = 1.0f;
+						} else
+						{
+							player->ddx = 0.0f;
+							player->dx = 0.0f;
+							player->max_dx = 1000.0f;
+						}
+						if (key_properties[MOVE_RIGHT].triggered)
+						{
+							player->ddx = 1.0f;
+							player->max_dx = 1.0f;
+						} else
+						{
+							player->ddx = 0.0f;
+							player->dx = 0.0f;
+							player->max_dx = 1000.0f;
+						}
 
-						//radialSwoop();
-						//SET UP RECURSION
+						renderer.standardBlockSize += key_properties[ZOOM_IN].triggered;
+						renderer.standardBlockSize -= key_properties[ZOOM_OUT].triggered;
+						if(renderer.standardBlockSize > 100) renderer.standardBlockSize = 100;
+						if(renderer.standardBlockSize < 1) renderer.standardBlockSize = 1;
+						if(key_properties[RESET_CAMERA].triggered) renderer.standardBlockSize = 16;
+
+						//Physics
+						ECS_Tick();
 						//Y Movement
 						//TODO: OOP like containerization
 						//canMoveUp = true;
@@ -221,19 +248,11 @@ int main(int argc, char *argv[])
 						}*/
 						//RENDERING
 						//Camera Zoom
-						//renderer.standardBlockSize += keybind[ZOOM_IN];
-						//renderer.standardBlockSize -= keybind[ZOOM_OUT];
-						if(renderer.standardBlockSize > 100) renderer.standardBlockSize = 100;
-						if(renderer.standardBlockSize < 1) renderer.standardBlockSize = 1;
-						//if(keybind[RESET_CAMERA]) renderer.standardBlockSize = 25;
 
 						//Draw Sky
 						boxColor(screen, 0, 0, WIDTH, HEIGHT, SKY_COLOR);
 
-
-						//for(int i = 0; i < 8; i++)
-							//blockImageScaled[i] = ScaleSurfaceNearest(blockImage[i], renderer.standardBlockSize, renderer.standardBlockSize);
-
+						//Draw terrain
 						for(int i = -renderer.renderDistanceX; i <= renderer.renderDistanceX; i++)
 						{
 							for(int j = -renderer.renderDistanceY; j <= renderer.renderDistanceY; j++)
@@ -244,14 +263,14 @@ int main(int argc, char *argv[])
 							}
 						}
 
-						//Player
+						//Draw entities
 						for(int i = 0; i < ACTIVE_ECS.amount; i++)
 						{
 							int render_x = ACTIVE_ECS.entity[i].x*renderer.standardBlockSize;
 							int render_y = ACTIVE_ECS.entity[i].y*renderer.standardBlockSize;
 							boxColor(screen, render_x, HEIGHT-render_y, render_x+renderer.standardBlockSize, HEIGHT-render_y-renderer.standardBlockSize, entity_property[ACTIVE_ECS.entity[i].entity_type].color);
 						}
-						//hotbar
+						//Draw hotbar
 						/*boxColor(screen, (WIDTH-9*50)/2+player->hotbarSelect*50, HEIGHT,
 										 (WIDTH-9*50)/2+(1+player->hotbarSelect)*50, HEIGHT - 50, 0x000000FF);*/
 						for(int i = 0; i < 9; i++)
@@ -264,7 +283,7 @@ int main(int argc, char *argv[])
 								stringColor(screen, (WIDTH-9*50)/2+i*50, HEIGHT - 10, intToString(player->inventory[i][0].amount), 0xFFFFFFFF);
 							}
 						}
-						//inventory
+						//Draw inventory
 						/*if(toggleState[INVENTORY])
 						{
 							for(int j = 0; j < 4; j++)
