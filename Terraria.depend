@@ -243,3 +243,545 @@
 1341003174 c:\program files (x86)\codeblocks\mingw\include\math.h
 	<_mingw.h>
 
+1782909079 source:c:\users\fujiwara\desktop\terraria\main.c
+	<time.h>
+	<stdbool.h>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_gfxPrimitives.h>
+
+1778158281 c:\msys64\mingw64\include\time.h
+	<crtdefs.h>
+	<sys/timeb.h>
+	<_timeval.h>
+	<pthread_time.h>
+
+1778158281 c:\msys64\mingw64\include\crtdefs.h
+	<corecrt.h>
+
+1778158281 c:\msys64\mingw64\include\corecrt.h
+	<_mingw.h>
+	<winapifamily.h>
+
+1778158281 c:\msys64\mingw64\include\_mingw.h
+	"_mingw_mac.h"
+	"_mingw_secapi.h"
+	"_cygwin.h"
+	<vadefs.h>
+
+1778158281 c:\msys64\mingw64\include\_mingw_mac.h
+
+1778158281 c:\msys64\mingw64\include\_mingw_secapi.h
+
+1778158281 c:\msys64\mingw64\include\_cygwin.h
+	<stddef.h>
+
+1778158281 c:\msys64\mingw64\include\stddef.h
+	<crtdefs.h>
+
+1778158281 c:\msys64\mingw64\include\vadefs.h
+	<_mingw.h>
+
+1778158281 c:\msys64\mingw64\include\winapifamily.h
+
+1778158281 c:\msys64\mingw64\include\sys\timeb.h
+	<crtdefs.h>
+	<sec_api/sys/timeb_s.h>
+
+1778158281 c:\msys64\mingw64\include\sec_api\sys\timeb_s.h
+	<sys/timeb.h>
+
+1778158281 c:\msys64\mingw64\include\_timeval.h
+
+1778162271 c:\msys64\mingw64\include\pthread_time.h
+	<sys/timeb.h>
+	"pthread_compat.h"
+
+1778162271 c:\msys64\mingw64\include\pthread_compat.h
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_audio.h"
+	"SDL_cdrom.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_loadso.h"
+	"SDL_mutex.h"
+	"SDL_rwops.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_video.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_stdinc.h
+	"SDL_config.h"
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<string.h>
+	<strings.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<iconv.h>
+	<alloca.h>
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_config.h
+	"SDL_platform.h"
+	<stdint.h>
+	<stdarg.h>
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_platform.h
+	<AvailabilityMacros.h>
+	<TargetConditionals.h>
+	<TargetConditionals.h>
+	<winapifamily.h>
+
+1770798873 c:\msys64\mingw64\include\sdl\begin_code.h
+
+1770798873 c:\msys64\mingw64\include\sdl\close_code.h
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_endian.h
+	"SDL_stdinc.h"
+	<intrin.h>
+	<endian.h>
+	<sys/byteorder.h>
+	<endian.h>
+	<sys/endian.h>
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_mutex.h"
+	<process.h>
+	<stdlib.h>
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_cdrom.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_cpuinfo.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_active.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_quit.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_active.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keysym.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_keysym.h
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_video.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1770798873 c:\msys64\mingw64\include\sdl\sdl_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1671264674 c:\msys64\mingw64\include\sdl\sdl_image.h
+	"SDL.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1704650649 c:\msys64\mingw64\include\sdl\sdl_gfxprimitives.h
+	<math.h>
+	<SDL.h>
+
+1783356277 source:c:\users\fujiwara\desktop\terraria\src\main.c
+	<time.h>
+	<math.h>
+	<stdbool.h>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_gfxPrimitives.h>
+	"input_handling.h"
+	"chunk.h"
+	"scene_type.h"
+	"glob.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl.h
+	"SDL_main.h"
+	"SDL_stdinc.h"
+	"SDL_audio.h"
+	"SDL_cdrom.h"
+	"SDL_cpuinfo.h"
+	"SDL_endian.h"
+	"SDL_error.h"
+	"SDL_events.h"
+	"SDL_loadso.h"
+	"SDL_mutex.h"
+	"SDL_rwops.h"
+	"SDL_thread.h"
+	"SDL_timer.h"
+	"SDL_video.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_main.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_stdinc.h
+	"SDL_config.h"
+	<sys/types.h>
+	<stdio.h>
+	<stdlib.h>
+	<stddef.h>
+	<stdarg.h>
+	<stdlib.h>
+	<malloc.h>
+	<stddef.h>
+	<stdarg.h>
+	<memory.h>
+	<string.h>
+	<strings.h>
+	<inttypes.h>
+	<stdint.h>
+	<ctype.h>
+	<iconv.h>
+	"begin_code.h"
+	<alloca.h>
+	<malloc.h>
+	<malloc.h>
+	<malloc.h>
+	<stdlib.h>
+	"close_code.h"
+
+1326110987 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_config.h
+	"SDL_platform.h"
+	"SDL_config_dreamcast.h"
+	"SDL_config_macos.h"
+	"SDL_config_macosx.h"
+	"SDL_config_symbian.h"
+	"SDL_config_win32.h"
+	"SDL_config_os2.h"
+	"SDL_config_minimal.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_platform.h
+
+1326110994 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_config_win32.h
+	"SDL_platform.h"
+
+1326111000 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\begin_code.h
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\close_code.h
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_audio.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_endian.h"
+	"SDL_mutex.h"
+	"SDL_thread.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_error.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_endian.h
+	"SDL_stdinc.h"
+	<endian.h>
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_mutex.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_thread.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_mutex.h"
+	"begin_code.h"
+	<process.h>
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_rwops.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_cdrom.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_cpuinfo.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_events.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_active.h"
+	"SDL_keyboard.h"
+	"SDL_mouse.h"
+	"SDL_joystick.h"
+	"SDL_quit.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_active.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_keyboard.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_keysym.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_keysym.h
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_mouse.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_video.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_video.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"SDL_rwops.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_joystick.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_quit.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_loadso.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_timer.h
+	"SDL_stdinc.h"
+	"SDL_error.h"
+	"begin_code.h"
+	"close_code.h"
+
+1325738639 c:\users\fujiwara\projects\sdl-1.2.15\include\sdl\sdl_version.h
+	"SDL_stdinc.h"
+	"begin_code.h"
+	"close_code.h"
+
+1783088820 c:\users\fujiwara\desktop\terraria\src\nearest_neighbor.h
+	<SDL.h>
+	"glob.h"
+
+1782917271 c:\users\fujiwara\desktop\terraria\src\perlin_noise.h
+	<math.h>
+
+1783284243 c:\users\fujiwara\desktop\terraria\src\input_handling.h
+	<SDL.h>
+	<stdbool.h>
+
+1783348492 c:\users\fujiwara\desktop\terraria\src\chunk.h
+	"glob.h"
+	"texture.h"
+	"renderer.h"
+	"perlin_noise.h"
+	"nearest_neighbor.h"
+	"entity.h"
+
+1783349139 c:\users\fujiwara\desktop\terraria\src\glob.h
+
+1783356466 c:\users\fujiwara\desktop\terraria\src\entity.h
+	<stdbool.h>
+	<stdio.h>
+	"item.h"
+	"entity_type.h"
+
+1783089418 c:\users\fujiwara\desktop\terraria\src\texture.h
+	<SDL.h>
+
+1783351539 c:\users\fujiwara\desktop\terraria\src\renderer.h
+	<SDL.h>
+
+1783345223 c:\users\fujiwara\desktop\terraria\src\item.h
+
+1783356096 c:\users\fujiwara\desktop\terraria\src\entity_type.h
+
+1783348976 c:\users\fujiwara\desktop\terraria\src\scene_type.h
+
+1783356579 source:c:\users\fujiwara\documents\github\terraria-sdl\src\main.c
+	<time.h>
+	<math.h>
+	<stdbool.h>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_gfxPrimitives.h>
+	"input_handling.h"
+	"chunk.h"
+	"scene_type.h"
+	"glob.h"
+
+1783284243 c:\users\fujiwara\documents\github\terraria-sdl\src\input_handling.h
+	<SDL.h>
+	<stdbool.h>
+
+1783348492 c:\users\fujiwara\documents\github\terraria-sdl\src\chunk.h
+	"glob.h"
+	"texture.h"
+	"renderer.h"
+	"perlin_noise.h"
+	"nearest_neighbor.h"
+	"entity.h"
+
+1783349139 c:\users\fujiwara\documents\github\terraria-sdl\src\glob.h
+
+1783089418 c:\users\fujiwara\documents\github\terraria-sdl\src\texture.h
+	<SDL.h>
+
+1783351539 c:\users\fujiwara\documents\github\terraria-sdl\src\renderer.h
+	<SDL.h>
+
+1782917271 c:\users\fujiwara\documents\github\terraria-sdl\src\perlin_noise.h
+	<math.h>
+
+1783088820 c:\users\fujiwara\documents\github\terraria-sdl\src\nearest_neighbor.h
+	<SDL.h>
+	"glob.h"
+
+1783356466 c:\users\fujiwara\documents\github\terraria-sdl\src\entity.h
+	<stdbool.h>
+	<stdio.h>
+	"item.h"
+	"entity_type.h"
+
+1783345223 c:\users\fujiwara\documents\github\terraria-sdl\src\item.h
+
+1783356096 c:\users\fujiwara\documents\github\terraria-sdl\src\entity_type.h
+
+1783348976 c:\users\fujiwara\documents\github\terraria-sdl\src\scene_type.h
+

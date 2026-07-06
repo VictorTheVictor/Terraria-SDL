@@ -1,0 +1,12 @@
+#ifndef SCENE_TYPE_H_INCLUDED
+#define SCENE_TYPE_H_INCLUDED
+
+typedef enum SceneType
+{
+	TITLE_SCREEN,
+	GAME_SCREEN,
+	PAUSE_SCREEN,
+	SCENE_TYPE_COUNT
+} SceneType;
+
+#endif // SCENE_TYPE_H_INCLUDED
