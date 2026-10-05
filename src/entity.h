@@ -111,11 +111,11 @@ void addItemToInventory(Entity *entity, Item item)
 {
 	int firstEmptyI = -1;
 	int firstEmptyJ = -1;
-    for(int i = 0; i < 9; i++)
-    {
-        for(int j = 0; j < 4; j++)
-        {
-        	if(entity->inventory[i][j].id == 0 && firstEmptyI < 0)
+	for(int i = 0; i < 9; i++)
+	{
+		for(int j = 0; j < 4; j++)
+		{
+			if(entity->inventory[i][j].id == 0 && firstEmptyI < 0)
 			{
 				firstEmptyI = i;
 				firstEmptyJ = j;
@@ -124,27 +124,27 @@ void addItemToInventory(Entity *entity, Item item)
 			if(entity->inventory[i][j].id == item.id)
 				if(entity->inventory[i][j].amount < 999)
 					entity->inventory[i][j].amount += item.amount;
-        }
-    }
+		}
+	}
 }
 
 void playerItemInit(Entity *player)
 {
 	//Entity player = initEntity(PLAYER, player);
 	//Give the player lots of items to debug with
-    for(int i = 0; i < 9; i++)
-    {
-        for(int j = 0; j < 4; j++)
-        {
-            player->inventory[i][j].id = 0;
-            player->inventory[i][j].amount = 0;
-            if(j == 0)
-            {
-                player->inventory[i][j].id = i+1;
-                player->inventory[i][j].amount = 16;
-            }
-        }
-    }
+	for(int i = 0; i < 9; i++)
+	{
+		for(int j = 0; j < 4; j++)
+		{
+			player->inventory[i][j].id = 0;
+			player->inventory[i][j].amount = 0;
+			if(j == 0)
+			{
+				player->inventory[i][j].id = i+1;
+				player->inventory[i][j].amount = 16;
+			}
+		}
+	}
 };
 
 #endif // ENTITY_H_INCLUDED

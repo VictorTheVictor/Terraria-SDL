@@ -10,18 +10,18 @@
 
 typedef struct
 {
-    char id;
-    char lightLevel;
-    char damageLevel;
+	char id;
+	char lightLevel;
+	char damageLevel;
 } Block;
 //NEED seed system
 typedef struct
 {
-    Block block[16][16];
-    int x, y;
-    Entity *entity;
-    SDL_Surface* sprite;
-    SDL_Surface* scaled_sprite;
+	Block block[16][16];
+	int x, y;
+	Entity *entity;
+	SDL_Surface* sprite;
+	SDL_Surface* scaled_sprite;
 	EntityControlSystem* entity_manager;
 } Chunk;
 
@@ -29,40 +29,40 @@ Chunk* buildChunk(int x, int y)
 {
 	//printf ("X: %d, Y: %d\n", x, y);
 	Chunk *chunk = malloc(sizeof(Chunk));
-    for(int i = 0; i < 16; i++)
-    {
-        float noise = FractalPerlin1D((float)(REAL_X) * 0.025f, 5, 0.5f);
-        int baseHeight = 64;
-        int hillHeight = 96;
+	for(int i = 0; i < 16; i++)
+	{
+		float noise = FractalPerlin1D((float)(REAL_X) * 0.025f, 5, 0.5f);
+		int baseHeight = 64;
+		int hillHeight = 96;
 
-        int groundY = baseHeight + (int)(noise * hillHeight);
+		int groundY = baseHeight + (int)(noise * hillHeight);
 
-        for(int j = 0; j < 16; j++)
-        {
-            if( REAL_Y > groundY)
-            {
-                chunk->block[i][j].id = 0;
-            }
-            else if(REAL_Y == groundY)
-            {
-                chunk->block[i][j].id = 2;
-            }
-            else if (REAL_Y < groundY && REAL_Y >= groundY-15)
-            {
-                chunk->block[i][j].id = 1;
-            }
-            else if (REAL_Y < groundY-15)
-            {
-                chunk->block[i][j].id = 3;
-            }
-            /*chunk->block[i][j].lightLevel = 16 - (groundY - REAL_Y);
-            if (chunk->block[i][j].lightLevel > 16)
-                chunk->block[i][j].lightLevel = 16;
-            if (chunk->block[i][j].lightLevel < 0)
-                chunk->block[i][j].lightLevel = 0;*/
+		for(int j = 0; j < 16; j++)
+		{
+			if( REAL_Y > groundY)
+			{
+				chunk->block[i][j].id = 0;
+			}
+			else if(REAL_Y == groundY)
+			{
+				chunk->block[i][j].id = 2;
+			}
+			else if (REAL_Y < groundY && REAL_Y >= groundY-15)
+			{
+				chunk->block[i][j].id = 1;
+			}
+			else if (REAL_Y < groundY-15)
+			{
+				chunk->block[i][j].id = 3;
+			}
+			/*chunk->block[i][j].lightLevel = 16 - (groundY - REAL_Y);
+			if (chunk->block[i][j].lightLevel > 16)
+				chunk->block[i][j].lightLevel = 16;
+			if (chunk->block[i][j].lightLevel < 0)
+				chunk->block[i][j].lightLevel = 0;*/
 			chunk->block[i][j].lightLevel = 16;
-        }
-    }
+		}
+	}
 	chunk->sprite = SDL_CreateRGBSurface(
 		SDL_SWSURFACE,
 		256,
@@ -113,8 +113,8 @@ Chunk *world[WORLD_SIZE][WORLD_SIZE];
 
 void radialChunkPass(int player_x, int player_y)
 {
-    renderer.renderDistanceX = (int)ceilf((float)WIDTH/(16*renderer.standardBlockSize*2));
-    renderer.renderDistanceY = (int)ceilf((float)HEIGHT/(16*renderer.standardBlockSize*2));
+	renderer.renderDistanceX = (int)ceilf((float)WIDTH/(16*renderer.standardBlockSize*2));
+	renderer.renderDistanceY = (int)ceilf((float)HEIGHT/(16*renderer.standardBlockSize*2));
 	//printf ("Render X: %d, Render Y: %d\n", renderer.renderDistanceX, renderer.renderDistanceY);
 	int x = 0;
 	int y = 0;

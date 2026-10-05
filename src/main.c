@@ -46,16 +46,16 @@ int main(int argc, char *argv[])
 
 	//FILE *worldFile  = fopen("world.txt", "r+"); //TODO: SAVE FILE
 
-    Entity *player = ECS_Spawn(spawnRegularEntity(33, 33, PLAYER));
-    playerItemInit(player);
-    ECS_Spawn(spawnRegularEntity(32, 32, SLIME));
-    ECS_Spawn(spawnRegularEntity(31, 31, SLIME));
+	Entity *player = ECS_Spawn(spawnRegularEntity(33, 33, PLAYER));
+	playerItemInit(player);
+	ECS_Spawn(spawnRegularEntity(32, 32, SLIME));
+	ECS_Spawn(spawnRegularEntity(31, 31, SLIME));
 
-    printf("%d", ACTIVE_ECS.entity[0].entity_type);
+	printf("%d", ACTIVE_ECS.entity[0].entity_type);
 
 	renderer.standardBlockSize = 16;
 
-    radialChunkPass(CHUNK_POS(player->x), CHUNK_POS(player->y));
+	radialChunkPass(CHUNK_POS(player->x), CHUNK_POS(player->y));
 
 	bool game_loop = true;
 	while (game_loop)

@@ -24,9 +24,9 @@ int selBlockX, selBlockY;
 
 char *intToString(int value)
 {
-    static char textBuffer[32];
-    sprintf(textBuffer, "%d", value);
-    return textBuffer;
+	static char textBuffer[32];
+	sprintf(textBuffer, "%d", value);
+	return textBuffer;
 }
 
 #endif // GLOB_H_INCLUDED
