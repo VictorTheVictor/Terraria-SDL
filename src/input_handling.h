@@ -62,8 +62,8 @@ static keyProperties key_properties[ACTION_COUNT] =
 	[MOVE_LEFT] = 		{false, false, false, false, 0, 0, ON_HOLD, SDLK_a},
 	[MOVE_RIGHT] = 		{false, false, false, false, 0, 0, ON_HOLD, SDLK_d},
 	[JUMP] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_SPACE},
-	[CROUCH] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_LCTRL},
-	[SPRINT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_LSHIFT},
+	[CROUCH] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_LSHIFT},
+	[SPRINT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_LCTRL},
 	[ZOOM_IN] = 		{false, false, false, false, 0, 0, ON_HOLD, SDLK_UP},
 	[ZOOM_OUT] = 		{false, false, false, false, 0, 0, ON_HOLD, SDLK_DOWN},
 

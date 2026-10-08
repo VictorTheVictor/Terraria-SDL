@@ -50,8 +50,11 @@ int main(int argc, char *argv[])
 	playerItemInit(player);
 	ECS_Spawn(spawnRegularEntity(32, 32, SLIME));
 	ECS_Spawn(spawnRegularEntity(31, 31, SLIME));
+	ECS_Spawn(spawnRegularEntity(0, 0, SLIME));
+	ECS_Spawn(spawnRegularEntity(1, 1, SLIME));
+	ECS_Spawn(spawnRegularEntity(37, 37, SLIME));
 
-	printf("%d", ACTIVE_ECS.entity[0].entity_type);
+	printf("%d", ACTIVE_ECS.entity[1].x);
 
 	renderer.standardBlockSize = 16;
 
@@ -85,7 +88,7 @@ int main(int argc, char *argv[])
 				char bufferThing[32];
 				switch (event.type)
 				{
-					/*case SDL_MOUSEBUTTONDOWN:
+					/*{case SDL_MOUSEBUTTONDOWN:
 						if(!inventoryPress)
 						{
 							switch (event.button.button)
@@ -121,7 +124,7 @@ int main(int argc, char *argv[])
 							case SDL_BUTTON_RIGHT:
 								break;
 						}
-						break;*/
+						break;}*/
 					case SDL_MOUSEMOTION:
 						mouseX = event.button.x;
 						mouseY = HEIGHT-event.button.y;
@@ -136,26 +139,25 @@ int main(int argc, char *argv[])
 					case SDL_USEREVENT:
 						//Keyboard
 						TickKeyboard();
-						if (key_properties[MOVE_LEFT].triggered)
+						player->dx = 0;
+						player->dy = 0;
+						if (key_properties[MOVE_LEFT].pressed)
 						{
-							player->ddx = -1.0f;
-							player->max_dx = 1.0f;
-						} else
-						{
-							player->ddx = 0.0f;
-							player->dx = 0.0f;
-							player->max_dx = 1000.0f;
+							player->dx = -0.5f;
 						}
-						if (key_properties[MOVE_RIGHT].triggered)
+						if (key_properties[MOVE_RIGHT].pressed)
 						{
-							player->ddx = 1.0f;
-							player->max_dx = 1.0f;
-						} else
-						{
-							player->ddx = 0.0f;
-							player->dx = 0.0f;
-							player->max_dx = 1000.0f;
+							player->dx = 0.5f;
 						}
+						if (key_properties[JUMP].pressed)
+						{
+							player->dy = +0.5f;
+						}
+						if (key_properties[CROUCH].pressed)
+						{
+							player->dy = -0.5f;
+						}
+                                                //player->x += player->dx;
 
 						renderer.standardBlockSize += key_properties[ZOOM_IN].triggered;
 						renderer.standardBlockSize -= key_properties[ZOOM_OUT].triggered;
@@ -258,17 +260,24 @@ int main(int argc, char *argv[])
 							for(int j = -renderer.renderDistanceY; j <= renderer.renderDistanceY; j++)
 							{
 								//printf("i: %d, j: %d\n", i, j);
-								SDL_Rect dest_pos = { i*256+renderer.renderDistanceX*256, HEIGHT-j*256-renderer.renderDistanceX*256};
+								//NEW RECT. add the one after to that one and REUSE IT LATER
+								SDL_Rect dest_pos = { i*256+renderer.renderDistanceX*256-player->x*25, HEIGHT-j*256-renderer.renderDistanceX*256+player->y*25};
 								SDL_BlitSurface(world[WORLD_CENTER+i][WORLD_CENTER+j]->sprite, NULL, screen, &dest_pos);
 							}
-						}
+						} //YET ANOTHER REFACTOR. LET'S GO //WAIT NO? WE'RE BACK
 
 						//Draw entities
+						/*
 						for(int i = 0; i < ACTIVE_ECS.amount; i++)
 						{
 							int render_x = ACTIVE_ECS.entity[i].x*renderer.standardBlockSize;
 							int render_y = ACTIVE_ECS.entity[i].y*renderer.standardBlockSize;
 							boxColor(screen, render_x, HEIGHT-render_y, render_x+renderer.standardBlockSize, HEIGHT-render_y-renderer.standardBlockSize, entity_property[ACTIVE_ECS.entity[i].entity_type].color);
+						}*/
+						for(int i = 0; i < ACTIVE_ECS.amount; i++)
+						{
+						        boxColor(screen, ACTIVE_ECS.entity[i].x, HEIGHT-ACTIVE_ECS.entity[i].y,
+                                                        ACTIVE_ECS.entity[i].x+16, HEIGHT-ACTIVE_ECS.entity[i].y-16, entity_property[ACTIVE_ECS.entity[i].entity_type].color);
 						}
 						//Draw hotbar
 						/*boxColor(screen, (WIDTH-9*50)/2+player->hotbarSelect*50, HEIGHT,

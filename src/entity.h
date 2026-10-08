@@ -10,7 +10,8 @@
 
 typedef struct Entity
 {
-	float x, y, dx, dy, ddx, ddy, max_dx, max_dy, width, height;
+	float x, y, dx, dy, ddx, ddy, max_dx, max_dy; //TODO: make this its own struct and have one for for self movement, one for force movement
+	float width, height;
 	int uuid, health;
 	EntityType entity_type;
 	bool active;
@@ -37,24 +38,28 @@ int ECS_Find_Free_Entity_Slot(EntityControlSystem* entity_control_system)
 		}
 }
 
-Entity spawnRegularEntity(int x, int y, EntityType entity_type)
+Entity spawnRegularEntity(int _x, int _y, EntityType _entity_type)
 {
 	Entity entity;
-	entity.x = x;
-	entity.y = y;
-	entity.entity_type = entity_type;
-	entity.health = entity_property[entity_type].defaultHealth;
+	entity.x = _x;
+	entity.y = _y;
+	entity.dx = 0;
+	entity.dy = 0;
+	entity.ddx = 0;
+	entity.ddy = 0;
+	entity.entity_type = _entity_type;
+	entity.health = entity_property[_entity_type].defaultHealth;
 	entity.active = 1;
 	return entity;
 }
 
-Entity spawnProjectileEntity(int x, int y, int dx, int dy)
+Entity spawnProjectileEntity(int _x, int _y, int _dx, int _dy)
 {
 	Entity projectile;
-	projectile.x = x;
-	projectile.y = y;
-	projectile.dx = dx;
-	projectile.dy = dy;
+	projectile.x = _x;
+	projectile.y = _y;
+	projectile.dx = _dx;
+	projectile.dy = _dy;
 	projectile.active = 1;
 	return projectile;
 }
@@ -94,12 +99,8 @@ void ECS_Tick()
 	{
 		if (ACTIVE_ECS.entity[i].active)
 		{
-			ACTIVE_ECS.entity[i].dx += ACTIVE_ECS.entity[i].ddx;
-			ACTIVE_ECS.entity[i].dy += ACTIVE_ECS.entity[i].ddy;
-			if(ACTIVE_ECS.entity[i].dx > ACTIVE_ECS.entity[i].max_dx) ACTIVE_ECS.entity[i].dx = ACTIVE_ECS.entity[i].max_dx;
-			if(ACTIVE_ECS.entity[i].dy > ACTIVE_ECS.entity[i].max_dy) ACTIVE_ECS.entity[i].dy = ACTIVE_ECS.entity[i].max_dy;
-			if(ACTIVE_ECS.entity[i].dx < -ACTIVE_ECS.entity[i].max_dx) ACTIVE_ECS.entity[i].dx = -ACTIVE_ECS.entity[i].max_dx;
-			if(ACTIVE_ECS.entity[i].dy < -ACTIVE_ECS.entity[i].max_dy) ACTIVE_ECS.entity[i].dy = -ACTIVE_ECS.entity[i].max_dy;
+			//ACTIVE_ECS.entity[i].dx += ACTIVE_ECS.entity[i].ddx;
+			//ACTIVE_ECS.entity[i].dy += ACTIVE_ECS.entity[i].ddy;
 			ACTIVE_ECS.entity[i].x += ACTIVE_ECS.entity[i].dx;
 			ACTIVE_ECS.entity[i].y += ACTIVE_ECS.entity[i].dy;
 		}

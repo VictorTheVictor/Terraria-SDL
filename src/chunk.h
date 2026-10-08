@@ -8,9 +8,18 @@
 #include "nearest_neighbor.h"
 #include "entity.h"
 
+typedef enum BlockID
+{
+	AIR,
+	DIRT,
+	GRASS,
+	STONE,
+	BLOCK_ID_MAX
+} BlockID;
+
 typedef struct
 {
-	char id;
+	BlockID id;
 	char lightLevel;
 	char damageLevel;
 } Block;
@@ -32,28 +41,28 @@ Chunk* buildChunk(int x, int y)
 	for(int i = 0; i < 16; i++)
 	{
 		float noise = FractalPerlin1D((float)(REAL_X) * 0.025f, 5, 0.5f);
-		int baseHeight = 64;
+		int baseHeight = 64; //sea level?
 		int hillHeight = 96;
 
 		int groundY = baseHeight + (int)(noise * hillHeight);
 
 		for(int j = 0; j < 16; j++)
 		{
-			if( REAL_Y > groundY)
+			if( REAL_Y > groundY) // TARGET BLOCK ABOVE GROUND LEVEL
 			{
-				chunk->block[i][j].id = 0;
+				chunk->block[i][j].id = AIR;
 			}
-			else if(REAL_Y == groundY)
+			else if(REAL_Y == groundY) //TARGET BLOCK AT GROUND LEVEL
 			{
-				chunk->block[i][j].id = 2;
+				chunk->block[i][j].id = GRASS;
 			}
-			else if (REAL_Y < groundY && REAL_Y >= groundY-15)
+			else if (REAL_Y < groundY && REAL_Y >= groundY-15) //TARGET BLOCK BELOW GROUND LEVEL AND ABOVE 15
 			{
-				chunk->block[i][j].id = 1;
+				chunk->block[i][j].id = DIRT;
 			}
-			else if (REAL_Y < groundY-15)
+			else if (REAL_Y < groundY-15) //TARGET BLOCK BELOW GROUND LEVEL AND BELOW 15
 			{
-				chunk->block[i][j].id = 3;
+				chunk->block[i][j].id = STONE;
 			}
 			/*chunk->block[i][j].lightLevel = 16 - (groundY - REAL_Y);
 			if (chunk->block[i][j].lightLevel > 16)
@@ -61,6 +70,8 @@ Chunk* buildChunk(int x, int y)
 			if (chunk->block[i][j].lightLevel < 0)
 				chunk->block[i][j].lightLevel = 0;*/
 			chunk->block[i][j].lightLevel = 16;
+
+                        if(x == 0) {chunk->block[i][j].id =  GRASS; }
 		}
 	}
 	chunk->sprite = SDL_CreateRGBSurface(
