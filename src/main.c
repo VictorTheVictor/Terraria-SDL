@@ -12,7 +12,8 @@
 
 SDL_Surface *screen;
 
-Uint32 mytimer(Uint32 ms, void *param) {
+Uint32 mytimer(Uint32 ms, void *param)
+{
 	SDL_Event ev;
 	ev.type = SDL_USEREVENT;
 	SDL_PushEvent(&ev);
@@ -46,19 +47,16 @@ int main(int argc, char *argv[])
 
 	//FILE *worldFile  = fopen("world.txt", "r+"); //TODO: SAVE FILE
 
-	Entity *player = ECS_Spawn(spawnRegularEntity(33, 33, PLAYER));
+	Entity *player = ECS_Spawn(spawnRegularEntity(POS_XY(33), PLAYER));
 	playerItemInit(player);
-	ECS_Spawn(spawnRegularEntity(32, 32, SLIME));
-	ECS_Spawn(spawnRegularEntity(31, 31, SLIME));
-	ECS_Spawn(spawnRegularEntity(0, 0, SLIME));
-	ECS_Spawn(spawnRegularEntity(1, 1, SLIME));
-	ECS_Spawn(spawnRegularEntity(37, 37, SLIME));
+	ECS_Spawn(spawnRegularEntity(POS_XY(34), SLIME));
+	ECS_Spawn(spawnRegularEntity(POS_XY(32), SLIME));
 
-	printf("%d", ACTIVE_ECS.entity[1].x);
+	//printf("%d", ACTIVE_ECS.entity[1].x);
 
 	renderer.standardBlockSize = 16;
 
-	radialChunkPass(CHUNK_POS(player->x), CHUNK_POS(player->y));
+	radialChunkPass(CHUNK_POS(player->position.x), CHUNK_POS(player->position.y));
 
 	bool game_loop = true;
 	while (game_loop)
@@ -94,12 +92,12 @@ int main(int argc, char *argv[])
 							switch (event.button.button)
 							{
 								struct Blocks currently_selected_block = chunk
-											[(int)((event.button.x - WIDTH/2)/(renderer.blockZoomFactor) + player->x + player->width/2) / 16]
-											[(int)((HEIGHT/2 - event.button.y)/(renderer.blockZoomFactor) + player->y + player->height/2) / 16].block
-											[(int)((event.button.x - WIDTH/2)/(renderer.blockZoomFactor) + player->x + player->width/2) % 16]
-											[(int)((HEIGHT/2 - event.button.y)/(renderer.blockZoomFactor) + player->y + player->height/2) % 16];
-								selBlockX = (int)((event.button.x - WIDTH/2)/(renderer.blockZoomFactor) + player->x + player->width/2) % 16;
-								selBlockY = (int)((HEIGHT/2 - event.button.y)/(renderer.blockZoomFactor) + player->y + player->height/2) % 16;
+											[(int)((event.button.x - WIDTH/2)/(renderer.blockZoomFactor) + player->position.x + player->width/2) / 16]
+											[(int)((HEIGHT/2 - event.button.y)/(renderer.blockZoomFactor) + player->position.y + player->height/2) / 16].block
+											[(int)((event.button.x - WIDTH/2)/(renderer.blockZoomFactor) + player->position.x + player->width/2) % 16]
+											[(int)((HEIGHT/2 - event.button.y)/(renderer.blockZoomFactor) + player->position.y + player->height/2) % 16];
+								selBlockX = (int)((event.button.x - WIDTH/2)/(renderer.blockZoomFactor) + player->position.x + player->width/2) % 16;
+								selBlockY = (int)((HEIGHT/2 - event.button.y)/(renderer.blockZoomFactor) + player->position.y + player->height/2) % 16;
 								case SDL_BUTTON_LEFT:
 									addItemToInventory(&player, currently_selected_block->id, 1);
 									debugValue = currently_selected_block.id;
@@ -139,25 +137,15 @@ int main(int argc, char *argv[])
 					case SDL_USEREVENT:
 						//Keyboard
 						TickKeyboard();
-						player->dx = 0;
-						player->dy = 0;
-						if (key_properties[MOVE_LEFT].pressed)
-						{
-							player->dx = -0.5f;
-						}
-						if (key_properties[MOVE_RIGHT].pressed)
-						{
-							player->dx = 0.5f;
-						}
-						if (key_properties[JUMP].pressed)
-						{
-							player->dy = +0.5f;
-						}
-						if (key_properties[CROUCH].pressed)
-						{
-							player->dy = -0.5f;
-						}
-                                                //player->x += player->dx;
+						player->speed = POS_ZERO;
+						if (key_properties[MOVE_LEFT].pressed) { player->speed.x = -0.5f; }
+						if (key_properties[MOVE_RIGHT].pressed) { player->speed.x = 0.5f; }
+						if (key_properties[JUMP].pressed) { player->speed.y = +0.5f; }
+						if (key_properties[CROUCH].pressed) { player->speed.y = -0.5f; }
+
+						//player->position.x += player->dx;
+						Camera camera = spawnCamera(player);
+						if (camera.entity) { camera.position = camera.entity->position; }
 
 						renderer.standardBlockSize += key_properties[ZOOM_IN].triggered;
 						renderer.standardBlockSize -= key_properties[ZOOM_OUT].triggered;
@@ -173,32 +161,32 @@ int main(int argc, char *argv[])
 						/*for(int i = 0; i < player->height+1; i++)
 						{
 						{
-							if(chunk[((int)(player->x + 0.1 + i*0.9) / 16)]
-									[(int)((player->y + player->dy + player->height + 0.05) / 16)].
-							   block[((int)(player->x + 0.1 + i*0.9) % 16)]
-									[((int)(player->y + player->dy + player->height + 0.05) % 16)].id > 0)
+							if(chunk[((int)(player->position.x + 0.1 + i*0.9) / 16)]
+									[(int)((player->position.y + player->dy + player->height + 0.05) / 16)].
+							   block[((int)(player->position.x + 0.1 + i*0.9) % 16)]
+									[((int)(player->position.y + player->dy + player->height + 0.05) % 16)].id > 0)
 								canMoveUp = false;
 						}
 						if(!canMoveUp)
 						{
 							if(player->dy > 0) player->dy = 0;
-							player->y = round(player->y);
+							player->position.y = round(player->position.y);
 						}
 
 						canMoveDown = true;
 						for(int i = 0; i < player->height+1; i++)
 						{
-							if(chunk[((int)(player->x + 0.1 + i*0.9) / 16)]
-									[(int)((player->y + player->dy - 0.05) / 16)].
-							   block[((int)(player->x + 0.1 + i*0.9) % 16)]
-									[((int)(player->y + player->dy - 0.05) % 16)].id > 0)
+							if(chunk[((int)(player->position.x + 0.1 + i*0.9) / 16)]
+									[(int)((player->position.y + player->dy - 0.05) / 16)].
+							   block[((int)(player->position.x + 0.1 + i*0.9) % 16)]
+									[((int)(player->position.y + player->dy - 0.05) % 16)].id > 0)
 								canMoveDown = false;
 						}
 						if(!canMoveDown)
 						{
 							if(player->dy < -0.4) player->health += round(5*(player->dy));
 							player->dy = 0;
-							player->y = round(player->y);
+							player->position.y = round(player->position.y);
 							if(jumpPress == 1 && canMoveUp) player->dy = 0.5;
 						}
 						else
@@ -206,41 +194,41 @@ int main(int argc, char *argv[])
 							player->dy -= GRAVITY;
 						}
 
-						if(canMoveUp || canMoveDown) player->y += player->dy;
+						if(canMoveUp || canMoveDown) player->position.y += player->dy;
 
 						//X Movement
 						canMoveLeft = true;
 						for(int i = 0; i < player->width+1; i++)
 						{
-							if(chunk[((int)(player->x - 0.05) / 16)]
-									[(int)((player->y + i*0.9 + 0.1) / 16)].
-							   block[((int)(player->x - 0.05) % 16)]
-									[((int)(player->y + i*0.9 + 0.1) % 16)].id > 0 || player->x -0.05 < 0)
+							if(chunk[((int)(player->position.x - 0.05) / 16)]
+									[(int)((player->position.y + i*0.9 + 0.1) / 16)].
+							   block[((int)(player->position.x - 0.05) % 16)]
+									[((int)(player->position.y + i*0.9 + 0.1) % 16)].id > 0 || player->position.x -0.05 < 0)
 									canMoveLeft = false;
 						}
 						if(!canMoveLeft)
 						{
-							player->x = round(player->x);
+							player->position.x = round(player->position.x);
 						}
 
 						canMoveRight = true;
 						for(int i = 0; i < player->width+1; i++)
 						{
-							if(chunk[((int)(player->x + 0.05 + player->width) / 16)]
-									[(int)((player->y + i*0.9 + 0.1) / 16)].
-							   block[((int)(player->x + 0.05 + player->width) % 16)]
-									[((int)(player->y + i*0.9 + 0.1) % 16)].id > 0 || player->x +0.05 > 256)
+							if(chunk[((int)(player->position.x + 0.05 + player->width) / 16)]
+									[(int)((player->position.y + i*0.9 + 0.1) / 16)].
+							   block[((int)(player->position.x + 0.05 + player->width) % 16)]
+									[((int)(player->position.y + i*0.9 + 0.1) % 16)].id > 0 || player->position.x +0.05 > 256)
 									canMoveRight = false;
 						}
 						if(!canMoveRight)
 						{
-							player->x = round(player->x);
+							player->position.x = round(player->position.x);
 						}
 
 						if(canMoveLeft && rightPress == 0 && leftPress == 1) player->dx = -0.1;
 						else if(canMoveRight && rightPress == 1 && leftPress == 0) player->dx = 0.1;
 						else player->dx = 0;
-						player->x += player->dx*player->dxMod;
+						player->position.x += player->dx*player->dxMod;
 
 						if(player->health <= 0)
 						{
@@ -259,9 +247,11 @@ int main(int argc, char *argv[])
 						{
 							for(int j = -renderer.renderDistanceY; j <= renderer.renderDistanceY; j++)
 							{
+								int x = (ACTIVE_ECS.entity[i].position.x - camera.position.x)*16;
+								int y = (ACTIVE_ECS.entity[i].position.y - camera.position.y)*16;
 								//printf("i: %d, j: %d\n", i, j);
 								//NEW RECT. add the one after to that one and REUSE IT LATER
-								SDL_Rect dest_pos = { i*256+renderer.renderDistanceX*256-player->x*25, HEIGHT-j*256-renderer.renderDistanceX*256+player->y*25};
+								SDL_Rect dest_pos = { i*256+renderer.renderDistanceX*256-player->position.x*25, HEIGHT-j*256-renderer.renderDistanceX*256+player->position.y*25};
 								SDL_BlitSurface(world[WORLD_CENTER+i][WORLD_CENTER+j]->sprite, NULL, screen, &dest_pos);
 							}
 						} //YET ANOTHER REFACTOR. LET'S GO //WAIT NO? WE'RE BACK
@@ -276,8 +266,14 @@ int main(int argc, char *argv[])
 						}*/
 						for(int i = 0; i < ACTIVE_ECS.amount; i++)
 						{
-						        boxColor(screen, ACTIVE_ECS.entity[i].x, HEIGHT-ACTIVE_ECS.entity[i].y,
-                                                        ACTIVE_ECS.entity[i].x+16, HEIGHT-ACTIVE_ECS.entity[i].y-16, entity_property[ACTIVE_ECS.entity[i].entity_type].color);
+							int x = (ACTIVE_ECS.entity[i].position.x - camera.position.x)*16;
+							int y = (ACTIVE_ECS.entity[i].position.y - camera.position.y)*16;
+							boxColor(	screen,
+									WIDTH/2+x-8,
+									HEIGHT/2-y+8,
+									WIDTH/2+x+8,
+									HEIGHT/2-y-8,
+									entity_property[ACTIVE_ECS.entity[i].entity_type].color);
 						}
 						//Draw hotbar
 						/*boxColor(screen, (WIDTH-9*50)/2+player->hotbarSelect*50, HEIGHT,
@@ -325,14 +321,14 @@ int main(int argc, char *argv[])
 							}
 							//F3 menu
 							char textBuffer[32];
-							sprintf(textBuffer, "X: %f, Y: %f, Chunk X: %d, Chunk Y: %d", player->x, player->y, (int)((player->x) / 16), (int)((player->y) / 16));
+							sprintf(textBuffer, "X: %f, Y: %f, Chunk X: %d, Chunk Y: %d", player->position.x, player->position.y, (int)((player->position.x) / 16), (int)((player->position.y) / 16));
 							stringColor(screen, 0, 0, textBuffer, 0xFFFFFFFF);
 							sprintf(textBuffer, "Zoom Level: %d", renderer.standardBlockSize);
 							stringColor(screen, 0, 10, textBuffer, 0xFFFFFFFF);
 							//stringColor(screen, 0, 20, bufferThing, 0xFFFFFFFF);
 							sprintf(textBuffer, "Mouse X: %d, Mouse Y: %d", mouseX, mouseY);
 							stringColor(screen, 0, 30, textBuffer, 0xFFFFFFFF);
-							sprintf(textBuffer, "Speed X: %f, Speed Y: %f", player->dx, player->dy);
+							sprintf(textBuffer, "Speed X: %f, Speed Y: %f", player->speed.x, player->speed.y);
 							stringColor(screen, 0, 40, textBuffer, 0xFFFFFFFF);
 							sprintf(textBuffer, "Debug Value: %d", debugValue);
 							stringColor(screen, 0, 50, textBuffer, 0xFFFFFFFF);
@@ -373,7 +369,7 @@ int main(int argc, char *argv[])
 				break;
 		}
 	}
-	//fprintf(worldFile, "%f\n%f\n%f\n%f\n", player->x, player->y, player->dx, player->dy); //FILE SAVE
+	//fprintf(worldFile, "%f\n%f\n%f\n%f\n", player->position.x, player->position.y, player->dx, player->dy); //FILE SAVE
 
 	SDL_RemoveTimer(id);
 	SDL_Quit();

@@ -8,15 +8,40 @@
 #include "item.h"
 #include "entity_type.h"
 
+#define POS_ZERO ((Position){0.0f,0.0f})
+#define POS_XY(x) ((Position){(float)(x),(float)(x)})
+#define POS_SET(x,y) ((Position){(float)(x),(float)(y)})
+
+typedef struct
+{
+        float x, y;
+} Position;
+
 typedef struct Entity
 {
-	float x, y, dx, dy, ddx, ddy, max_dx, max_dy; //TODO: make this its own struct and have one for for self movement, one for force movement
+        Position position;
+        Position speed;
+        Position acceleration;
+        Position maxAcceleration;
+        //TODO: make this its own struct and have one for for self movement, one for force movement
 	float width, height;
 	int uuid, health;
 	EntityType entity_type;
 	bool active;
 	Item inventory[9][4];
 } Entity;
+
+typedef struct
+{
+        Entity* entity;
+        Position position;
+} Camera;
+
+Camera spawnCamera(Entity* _entity)
+{
+        Camera camera = {_entity, POS_ZERO};
+        return camera;
+}
 
 typedef struct
 {
@@ -38,28 +63,23 @@ int ECS_Find_Free_Entity_Slot(EntityControlSystem* entity_control_system)
 		}
 }
 
-Entity spawnRegularEntity(int _x, int _y, EntityType _entity_type)
+Entity spawnRegularEntity(Position _position, EntityType _entity_type)
 {
 	Entity entity;
-	entity.x = _x;
-	entity.y = _y;
-	entity.dx = 0;
-	entity.dy = 0;
-	entity.ddx = 0;
-	entity.ddy = 0;
+	entity.position = _position;
+	entity.speed = POS_ZERO;
+	entity.acceleration = POS_ZERO;
 	entity.entity_type = _entity_type;
 	entity.health = entity_property[_entity_type].defaultHealth;
 	entity.active = 1;
 	return entity;
 }
 
-Entity spawnProjectileEntity(int _x, int _y, int _dx, int _dy)
+Entity spawnProjectileEntity(Position _position, Position _speed)
 {
 	Entity projectile;
-	projectile.x = _x;
-	projectile.y = _y;
-	projectile.dx = _dx;
-	projectile.dy = _dy;
+	projectile.position = _position;
+	projectile.speed = _speed;
 	projectile.active = 1;
 	return projectile;
 }
@@ -101,8 +121,8 @@ void ECS_Tick()
 		{
 			//ACTIVE_ECS.entity[i].dx += ACTIVE_ECS.entity[i].ddx;
 			//ACTIVE_ECS.entity[i].dy += ACTIVE_ECS.entity[i].ddy;
-			ACTIVE_ECS.entity[i].x += ACTIVE_ECS.entity[i].dx;
-			ACTIVE_ECS.entity[i].y += ACTIVE_ECS.entity[i].dy;
+			ACTIVE_ECS.entity[i].position.x += ACTIVE_ECS.entity[i].speed.x;
+			ACTIVE_ECS.entity[i].position.y += ACTIVE_ECS.entity[i].speed.y;
 		}
 	}
 }
