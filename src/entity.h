@@ -75,7 +75,7 @@ int ECS_Find_First_Entity_Slot(EntityControlSystem* entity_control_system, bool 
 	return -1;
 }
 
-int ECS_Find_Next_Occupied_Entity_Slot(EntityControlSystem* entity_control_system, bool activity, int current_index)
+int ECS_Find_Next_Entity_Slot(EntityControlSystem* entity_control_system, bool activity, int current_index)
 {
 	current_index++;
 	for (int i = current_index; i < MAX_ENTITY_POOL + current_index; i++)

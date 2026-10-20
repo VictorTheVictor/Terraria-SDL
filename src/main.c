@@ -144,10 +144,10 @@ int main(int argc, char *argv[])
 						if (key_properties[DEBUG].triggered) debugMode++;
 						debugMode %= 3;
 
-						if (key_properties[CAMERA].triggered)
+						if (key_properties[CAMERA].triggered || camera.entity->active == 0)
 							camera.entity = &ACTIVE_ECS.entity
 							[
-								ECS_Find_Next_Occupied_Entity_Slot(&ACTIVE_ECS, 1, (int)(camera.entity-ACTIVE_ECS.entity))
+								ECS_Find_Next_Entity_Slot(&ACTIVE_ECS, 1, (int)(camera.entity-ACTIVE_ECS.entity))
 							];
 
 						player->internal.acceleration = POS_ZERO;
