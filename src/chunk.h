@@ -7,17 +7,9 @@
 #include "perlin_noise.h"
 #include "nearest_neighbor.h"
 #include "entity.h"
+#include "blocks.h"
 
 #define CHUNK_DEBUG 1
-
-typedef enum BlockID
-{
-	AIR,
-	DIRT,
-	GRASS,
-	STONE,
-	BLOCK_ID_MAX
-} BlockID;
 
 typedef struct
 {

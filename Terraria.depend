@@ -1026,7 +1026,7 @@
 
 1785247756 c:\users\fujiwara\coding\terraria-sdl\src\scene_type.h
 
-1792494301 source:c:\users\fujiwara\coding\c\terraria-sdl\src\main.c
+1792495439 source:c:\users\fujiwara\coding\c\terraria-sdl\src\main.c
 	<time.h>
 	<math.h>
 	<stdbool.h>
@@ -1232,13 +1232,14 @@
 	<SDL.h>
 	<stdbool.h>
 
-1792494754 c:\users\fujiwara\coding\c\terraria-sdl\src\chunk.h
+1792495870 c:\users\fujiwara\coding\c\terraria-sdl\src\chunk.h
 	"glob.h"
 	"texture.h"
 	"renderer.h"
 	"perlin_noise.h"
 	"nearest_neighbor.h"
 	"entity.h"
+	"blocks.h"
 
 1791898128 c:\users\fujiwara\coding\c\terraria-sdl\src\glob.h
 
@@ -1255,7 +1256,7 @@
 	<SDL.h>
 	"glob.h"
 
-1792494186 c:\users\fujiwara\coding\c\terraria-sdl\src\entity.h
+1792495588 c:\users\fujiwara\coding\c\terraria-sdl\src\entity.h
 	<stdbool.h>
 	<stdio.h>
 	<math.h>
@@ -1267,4 +1268,6 @@
 1791898128 c:\users\fujiwara\coding\c\terraria-sdl\src\entity_type.h
 
 1791898128 c:\users\fujiwara\coding\c\terraria-sdl\src\scene_type.h
+
+1792495983 c:\users\fujiwara\coding\c\terraria-sdl\src\blocks.h
 
