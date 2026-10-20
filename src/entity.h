@@ -5,6 +5,7 @@
 
 #include <stdbool.h>
 #include <stdio.h>
+#include <math.h>
 #include "item.h"
 #include "entity_type.h"
 
@@ -12,17 +13,29 @@
 #define POS_XY(x) ((Position){(float)(x),(float)(x)})
 #define POS_SET(x,y) ((Position){(float)(x),(float)(y)})
 
+#define FLOAT_CLAMP(x,max_x) (x)=fmaxf(-max_x,fminf(x,max_x))
+
+#define FORCE_ZERO ((Force){0.0f,0.0f,0.0f})
+
 typedef struct
 {
         float x, y;
 } Position;
 
+typedef struct
+{
+        Position speed;
+        Position acceleration;
+        float maxSpeed;
+} Force;
+
 typedef struct Entity
 {
         Position position;
-        Position speed;
-        Position acceleration;
-        Position maxAcceleration;
+
+        Force internal;
+        Force external;
+
         //TODO: make this its own struct and have one for for self movement, one for force movement
 	float width, height;
 	int uuid, health;
@@ -52,41 +65,51 @@ typedef struct
 static EntityControlSystem ACTIVE_ECS;
 static EntityControlSystem INACTIVE_ECS;
 
-int ECS_Find_Free_Entity_Slot(EntityControlSystem* entity_control_system)
+int ECS_Find_First_Entity_Slot(EntityControlSystem* entity_control_system, bool activity)
 {
-	int result = -1;
 	for (int i = 0; i < MAX_ENTITY_POOL; i++)
-		if (entity_control_system->entity[i].active == 0)
+		if (entity_control_system->entity[i].active == activity)
 		{
-			result = i;
-			break;
+			return i;
 		}
+	return -1;
+}
+
+int ECS_Find_Next_Occupied_Entity_Slot(EntityControlSystem* entity_control_system, bool activity, int current_index)
+{
+	current_index++;
+	for (int i = current_index; i < MAX_ENTITY_POOL + current_index; i++)
+		if (entity_control_system->entity[i%MAX_ENTITY_POOL].active == activity)
+		{
+			return i%256;
+		}
+	return -1;
 }
 
 Entity spawnRegularEntity(Position _position, EntityType _entity_type)
 {
 	Entity entity;
 	entity.position = _position;
-	entity.speed = POS_ZERO;
-	entity.acceleration = POS_ZERO;
+	entity.internal = FORCE_ZERO;
+	entity.external = FORCE_ZERO;
 	entity.entity_type = _entity_type;
 	entity.health = entity_property[_entity_type].defaultHealth;
 	entity.active = 1;
 	return entity;
 }
 
-Entity spawnProjectileEntity(Position _position, Position _speed)
+/*Entity spawnProjectileEntity(Position _position, Position _speed)
 {
 	Entity projectile;
 	projectile.position = _position;
 	projectile.speed = _speed;
 	projectile.active = 1;
 	return projectile;
-}
+}*/
 
 Entity* ECS_Spawn(Entity entity)
 {
-	int index = ECS_Find_Free_Entity_Slot(&ACTIVE_ECS);
+	int index = ECS_Find_First_Entity_Slot(&ACTIVE_ECS, 0);
 	printf("Index: %d, Type: %d\n", index, entity.entity_type);
 	if (index >= 0)
 	{
@@ -104,7 +127,7 @@ void ECS_Despawn(int index)
 
 void ECS_Deactivate(int ACTIVE_ECS_index)
 {
-	int free_slot_index = ECS_Find_Free_Entity_Slot(&INACTIVE_ECS);
+	int free_slot_index = ECS_Find_First_Entity_Slot(&INACTIVE_ECS, 0);
 	if (free_slot_index >= 0)
 	{
 		INACTIVE_ECS.entity[free_slot_index] = INACTIVE_ECS.entity[ACTIVE_ECS_index];
@@ -119,10 +142,26 @@ void ECS_Tick()
 	{
 		if (ACTIVE_ECS.entity[i].active)
 		{
-			//ACTIVE_ECS.entity[i].dx += ACTIVE_ECS.entity[i].ddx;
-			//ACTIVE_ECS.entity[i].dy += ACTIVE_ECS.entity[i].ddy;
-			ACTIVE_ECS.entity[i].position.x += ACTIVE_ECS.entity[i].speed.x;
-			ACTIVE_ECS.entity[i].position.y += ACTIVE_ECS.entity[i].speed.y;
+			ACTIVE_ECS.entity[i].external.speed.x += ACTIVE_ECS.entity[i].external.acceleration.x;
+			//FLOAT_CLAMP(ACTIVE_ECS.entity[i].external.speed.x, ACTIVE_ECS.entity[i].external.maxSpeed);
+			ACTIVE_ECS.entity[i].external.speed.y += ACTIVE_ECS.entity[i].external.acceleration.y;
+			//FLOAT_CLAMP(ACTIVE_ECS.entity[i].external.speed.y, ACTIVE_ECS.entity[i].external.maxSpeed);
+
+			ACTIVE_ECS.entity[i].internal.speed.x *= 0.50;
+			ACTIVE_ECS.entity[i].internal.speed.y *= 0.50;
+
+			ACTIVE_ECS.entity[i].internal.speed.x += ACTIVE_ECS.entity[i].internal.acceleration.x;
+			//FLOAT_CLAMP(ACTIVE_ECS.entity[i].internal.speed.x, ACTIVE_ECS.entity[i].internal.maxSpeed);
+			ACTIVE_ECS.entity[i].internal.speed.y += ACTIVE_ECS.entity[i].internal.acceleration.y;
+			//FLOAT_CLAMP(ACTIVE_ECS.entity[i].internal.speed.y, ACTIVE_ECS.entity[i].internal.maxSpeed);
+
+			Position totalSpeed;
+
+			totalSpeed.x = ACTIVE_ECS.entity[i].external.speed.x+ACTIVE_ECS.entity[i].internal.speed.x;
+			totalSpeed.y = ACTIVE_ECS.entity[i].external.speed.y+ACTIVE_ECS.entity[i].internal.speed.y;
+
+			ACTIVE_ECS.entity[i].position.x += totalSpeed.x;
+			ACTIVE_ECS.entity[i].position.y += totalSpeed.y;
 		}
 	}
 }

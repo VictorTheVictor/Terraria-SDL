@@ -1026,7 +1026,7 @@
 
 1785247756 c:\users\fujiwara\coding\terraria-sdl\src\scene_type.h
 
-1791975354 source:c:\users\fujiwara\coding\c\terraria-sdl\src\main.c
+1792494301 source:c:\users\fujiwara\coding\c\terraria-sdl\src\main.c
 	<time.h>
 	<math.h>
 	<stdbool.h>
@@ -1228,11 +1228,11 @@
 	<math.h>
 	"SDL.h"
 
-1791898128 c:\users\fujiwara\coding\c\terraria-sdl\src\input_handling.h
+1792416015 c:\users\fujiwara\coding\c\terraria-sdl\src\input_handling.h
 	<SDL.h>
 	<stdbool.h>
 
-1791898128 c:\users\fujiwara\coding\c\terraria-sdl\src\chunk.h
+1792494754 c:\users\fujiwara\coding\c\terraria-sdl\src\chunk.h
 	"glob.h"
 	"texture.h"
 	"renderer.h"
@@ -1255,9 +1255,10 @@
 	<SDL.h>
 	"glob.h"
 
-1791974731 c:\users\fujiwara\coding\c\terraria-sdl\src\entity.h
+1792494186 c:\users\fujiwara\coding\c\terraria-sdl\src\entity.h
 	<stdbool.h>
 	<stdio.h>
+	<math.h>
 	"item.h"
 	"entity_type.h"
 

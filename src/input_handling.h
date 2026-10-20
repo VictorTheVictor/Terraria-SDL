@@ -17,7 +17,8 @@ typedef enum KeyAction
 	ZOOM_OUT,
 
 	INVENTORY,
-	SHOW_DEBUG,
+	DEBUG,
+	CAMERA,
 	PAUSE,
 	HOTBAR_1,
 	HOTBAR_2,
@@ -61,28 +62,29 @@ static keyProperties key_properties[ACTION_COUNT] =
 {
 	[MOVE_LEFT] = 		{false, false, false, false, 0, 0, ON_HOLD, SDLK_a},
 	[MOVE_RIGHT] = 		{false, false, false, false, 0, 0, ON_HOLD, SDLK_d},
-	[JUMP] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_SPACE},
+	[JUMP] = 				{false, false, false, false, 0, 0, ON_HOLD, SDLK_SPACE},
 	[CROUCH] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_LSHIFT},
 	[SPRINT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_LCTRL},
-	[ZOOM_IN] = 		{false, false, false, false, 0, 0, ON_HOLD, SDLK_UP},
-	[ZOOM_OUT] = 		{false, false, false, false, 0, 0, ON_HOLD, SDLK_DOWN},
+	[ZOOM_IN] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_UP},
+	[ZOOM_OUT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_DOWN},
 
 	[INVENTORY] = 		{false, false, false, false, 0, 0, ON_REPEAT, SDLK_e},
-	[SHOW_DEBUG] = 		{false, false, false, false, 0, 0, ON_REPEAT, SDLK_F3},
+	[DEBUG] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_F3},
+	[CAMERA] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_F5},
 	[PAUSE] = 			{false, false, false, false, 0, 0, ON_REPEAT, SDLK_ESCAPE},
 
-	[HOTBAR_1] = 		{false, false, false, false, 0, 0, ON_PRESS, SDLK_1},
-	[HOTBAR_2] = 		{false, false, false, false, 0, 0, ON_PRESS, SDLK_2},
-	[HOTBAR_3] = 		{false, false, false, false, 0, 0, ON_PRESS, SDLK_3},
-	[HOTBAR_4] = 		{false, false, false, false, 0, 0, ON_PRESS, SDLK_4},
-	[HOTBAR_5] = 		{false, false, false, false, 0, 0, ON_PRESS, SDLK_5},
-	[HOTBAR_6] = 		{false, false, false, false, 0, 0, ON_PRESS, SDLK_6},
-	[HOTBAR_7] = 		{false, false, false, false, 0, 0, ON_PRESS, SDLK_7},
-	[HOTBAR_8] = 		{false, false, false, false, 0, 0, ON_PRESS, SDLK_8},
-	[HOTBAR_9] = 		{false, false, false, false, 0, 0, ON_PRESS, SDLK_9},
+	[HOTBAR_1] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_1},
+	[HOTBAR_2] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_2},
+	[HOTBAR_3] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_3},
+	[HOTBAR_4] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_4},
+	[HOTBAR_5] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_5},
+	[HOTBAR_6] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_6},
+	[HOTBAR_7] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_7},
+	[HOTBAR_8] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_8},
+	[HOTBAR_9] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_9},
 
-	[RESPAWN] = 		{false, false, false, false, 0, 0, ON_RELEASE, SDLK_r},
-	[RESET_CAMERA] = 	{false, false, false, false, 0, 0, ON_RELEASE, SDLK_BACKSPACE}
+	[RESPAWN] = 			{false, false, false, false, 0, 0, ON_RELEASE, SDLK_r},
+	[RESET_CAMERA] = 		{false, false, false, false, 0, 0, ON_RELEASE, SDLK_BACKSPACE}
 };
 
 void processKeyPress(SDLKey key)

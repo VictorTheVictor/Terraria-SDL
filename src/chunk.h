@@ -8,6 +8,8 @@
 #include "nearest_neighbor.h"
 #include "entity.h"
 
+#define CHUNK_DEBUG 1
+
 typedef enum BlockID
 {
 	AIR,
@@ -105,6 +107,15 @@ Chunk* buildChunk(int x, int y)
 				SDL_BlitSurface(blockImage[chunk->block[i][j].id], NULL, chunk->sprite, &dest_pos);
 		}
 	}
+
+	if (CHUNK_DEBUG)
+	{
+		rectangleColor(chunk->sprite, 0, 0, 256, 256, 0x000000FF);
+		char textBuffer[32];
+		sprintf(textBuffer, "X: %d, Y: %d", x, y);
+		stringColor(chunk->sprite, 10, 10, textBuffer, 0xFFFFFFFF);
+	}
+
 	//chunk->scaledSprite = ScaleSurfaceNearest(chunk->sprite, 16*renderer.standardBlockSize, renderer.standardBlockSize*16);
 	//IMPLEMENT MIPMAPPING INSTEAD?
 	/*char path[256];

@@ -47,8 +47,11 @@ int main(int argc, char *argv[])
 
 	//FILE *worldFile  = fopen("world.txt", "r+"); //TODO: SAVE FILE
 
-	Entity *player = ECS_Spawn(spawnRegularEntity(POS_XY(33), PLAYER));
+	Entity *player = ECS_Spawn(spawnRegularEntity(POS_SET(0, 32), PLAYER));
 	playerItemInit(player);
+
+	Camera camera = spawnCamera(player);
+
 	ECS_Spawn(spawnRegularEntity(POS_XY(34), SLIME));
 	ECS_Spawn(spawnRegularEntity(POS_XY(32), SLIME));
 
@@ -137,14 +140,22 @@ int main(int argc, char *argv[])
 					case SDL_USEREVENT:
 						//Keyboard
 						TickKeyboard();
-						player->speed = POS_ZERO;
-						if (key_properties[MOVE_LEFT].pressed) { player->speed.x = -0.5f; }
-						if (key_properties[MOVE_RIGHT].pressed) { player->speed.x = 0.5f; }
-						if (key_properties[JUMP].pressed) { player->speed.y = +0.5f; }
-						if (key_properties[CROUCH].pressed) { player->speed.y = -0.5f; }
 
-						//player->position.x += player->dx;
-						Camera camera = spawnCamera(player);
+						if (key_properties[DEBUG].triggered) debugMode++;
+						debugMode %= 3;
+
+						if (key_properties[CAMERA].triggered)
+							camera.entity = &ACTIVE_ECS.entity
+							[
+								ECS_Find_Next_Occupied_Entity_Slot(&ACTIVE_ECS, 1, (int)(camera.entity-ACTIVE_ECS.entity))
+							];
+
+						player->internal.acceleration = POS_ZERO;
+						if (key_properties[MOVE_LEFT].pressed) { player->internal.acceleration.x = -0.5f; }
+						if (key_properties[MOVE_RIGHT].pressed) { player->internal.acceleration.x = 0.5f; }
+						if (key_properties[JUMP].pressed) { player->internal.acceleration.y = +0.5f; }
+						if (key_properties[CROUCH].pressed) { player->internal.acceleration.y = -0.5f; }
+
 						if (camera.entity) { camera.position = camera.entity->position; }
 
 						renderer.standardBlockSize += key_properties[ZOOM_IN].triggered;
@@ -251,7 +262,11 @@ int main(int argc, char *argv[])
 								int y = (ACTIVE_ECS.entity[i].position.y - camera.position.y)*16;
 								//printf("i: %d, j: %d\n", i, j);
 								//NEW RECT. add the one after to that one and REUSE IT LATER
-								SDL_Rect dest_pos = { i*256+renderer.renderDistanceX*256-player->position.x*25, HEIGHT-j*256-renderer.renderDistanceX*256+player->position.y*25};
+								SDL_Rect dest_pos =
+								{
+									i*256+renderer.renderDistanceX*256-camera.entity->position.x*16,
+									HEIGHT-j*256-renderer.renderDistanceX*256+camera.entity->position.y*16
+								};
 								SDL_BlitSurface(world[WORLD_CENTER+i][WORLD_CENTER+j]->sprite, NULL, screen, &dest_pos);
 							}
 						} //YET ANOTHER REFACTOR. LET'S GO //WAIT NO? WE'RE BACK
@@ -278,10 +293,10 @@ int main(int argc, char *argv[])
 						//Draw hotbar
 						/*boxColor(screen, (WIDTH-9*50)/2+player->hotbarSelect*50, HEIGHT,
 										 (WIDTH-9*50)/2+(1+player->hotbarSelect)*50, HEIGHT - 50, 0x000000FF);*/
-						for(int i = 0; i < 9; i++)
+						for (int i = 0; i < 9; i++)
 						{
 							boxColor(screen, (WIDTH-9*50)/2+i*50, HEIGHT, (WIDTH-9*50)/2+i*50 + 50, HEIGHT - 50, 0x88888888);
-							if(player->inventory[i][0].id != 0 && player->inventory[i][0].id < 8)
+							if (player->inventory[i][0].id != 0 && player->inventory[i][0].id < 8)
 							{
 								SDL_Rect dest_pos = { (WIDTH-9*50)/2+i*50, HEIGHT - 50, 0, 0 };
 								SDL_BlitSurface(blockImage[player->inventory[i][0].id], NULL, screen, &dest_pos);
@@ -320,15 +335,16 @@ int main(int argc, char *argv[])
 								boxColor(screen, WIDTH/2, HEIGHT/2, WIDTH, HEIGHT, 0x0000FF88);
 							}
 							//F3 menu
-							char textBuffer[32];
+							char textBuffer[256];
 							sprintf(textBuffer, "X: %f, Y: %f, Chunk X: %d, Chunk Y: %d", player->position.x, player->position.y, (int)((player->position.x) / 16), (int)((player->position.y) / 16));
 							stringColor(screen, 0, 0, textBuffer, 0xFFFFFFFF);
 							sprintf(textBuffer, "Zoom Level: %d", renderer.standardBlockSize);
 							stringColor(screen, 0, 10, textBuffer, 0xFFFFFFFF);
-							//stringColor(screen, 0, 20, bufferThing, 0xFFFFFFFF);
+							sprintf(textBuffer, "Target Entity: %d", (int)(camera.entity - ACTIVE_ECS.entity));
+							stringColor(screen, 0, 20, textBuffer, 0xFFFFFFFF);
 							sprintf(textBuffer, "Mouse X: %d, Mouse Y: %d", mouseX, mouseY);
 							stringColor(screen, 0, 30, textBuffer, 0xFFFFFFFF);
-							sprintf(textBuffer, "Speed X: %f, Speed Y: %f", player->speed.x, player->speed.y);
+							sprintf(textBuffer, "Speed X: %f, Speed Y: %f", player->internal.speed.x, player->internal.speed.y);
 							stringColor(screen, 0, 40, textBuffer, 0xFFFFFFFF);
 							sprintf(textBuffer, "Debug Value: %d", debugValue);
 							stringColor(screen, 0, 50, textBuffer, 0xFFFFFFFF);
