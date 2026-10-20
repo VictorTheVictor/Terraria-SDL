@@ -16,6 +16,7 @@
 #define FLOAT_CLAMP(x,max_x) (x)=fmaxf(-max_x,fminf(x,max_x))
 
 #define FORCE_ZERO ((Force){0.0f,0.0f,0.0f})
+#define SPEED(x) ((Force){x,0.0f,0.0f,0.0f})
 
 typedef struct
 {
@@ -86,7 +87,7 @@ int ECS_Find_Next_Entity_Slot(EntityControlSystem* entity_control_system, bool a
 	return -1;
 }
 
-Entity spawnRegularEntity(Position _position, EntityType _entity_type)
+Entity spawnRegularEntity( EntityType _entity_type, Position _position)
 {
 	Entity entity;
 	entity.position = _position;
@@ -98,14 +99,14 @@ Entity spawnRegularEntity(Position _position, EntityType _entity_type)
 	return entity;
 }
 
-/*Entity spawnProjectileEntity(Position _position, Position _speed)
+Entity spawnProjectileEntity(Position _position, Position _speed)
 {
 	Entity projectile;
 	projectile.position = _position;
-	projectile.speed = _speed;
+	projectile.external = SPEED(_speed);
 	projectile.active = 1;
 	return projectile;
-}*/
+}
 
 Entity* ECS_Spawn(Entity entity)
 {

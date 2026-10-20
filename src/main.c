@@ -47,13 +47,13 @@ int main(int argc, char *argv[])
 
 	//FILE *worldFile  = fopen("world.txt", "r+"); //TODO: SAVE FILE
 
-	Entity *player = ECS_Spawn(spawnRegularEntity(POS_SET(0, 32), PLAYER));
+	Entity *player = ECS_Spawn(spawnRegularEntity(PLAYER, POS_SET(0, 32)));
 	playerItemInit(player);
 
 	Camera camera = spawnCamera(player);
 
-	ECS_Spawn(spawnRegularEntity(POS_XY(34), SLIME));
-	ECS_Spawn(spawnRegularEntity(POS_XY(32), SLIME));
+	ECS_Spawn(spawnRegularEntity(SLIME, POS_XY(34)));
+	ECS_Spawn(spawnRegularEntity(SLIME, POS_XY(32)));
 
 	//printf("%d", ACTIVE_ECS.entity[1].x);
 
