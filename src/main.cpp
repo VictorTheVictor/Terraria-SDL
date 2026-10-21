@@ -50,16 +50,25 @@ int main(int argc, char *argv[])
 	Entity *player = ECS_Spawn(spawnRegularEntity(PLAYER, POS_SET(0, 32)));
 	playerItemInit(player);
 
-	Camera camera = spawnCamera(player);
+	Camera camera = Camera(player);
 
-	ECS_Spawn(spawnRegularEntity(SLIME, POS_XY(34)));
-	ECS_Spawn(spawnRegularEntity(SLIME, POS_XY(32)));
+	ECS_Spawn(spawnRegularEntity(SLIME, POS(34)));
+	ECS_Spawn(spawnRegularEntity(SLIME, POS(32)));
 
 	//printf("%d", ACTIVE_ECS.entity[1].x);
 
 	renderer.standardBlockSize = 16;
 
 	radialChunkPass(CHUNK_POS(player->position.x), CHUNK_POS(player->position.y));
+
+	Uint32 lastFrameTime = SDL_GetTicks();
+
+	float fps = 0.0f;
+	float frameMs = 0.0f;
+
+	char fps_index = 0;
+	float avg_fps = 0.0f;
+	float fps_array[256];
 
 	bool game_loop = true;
 	while (game_loop)
@@ -127,17 +136,24 @@ int main(int argc, char *argv[])
 						}
 						break;}*/
 					case SDL_MOUSEMOTION:
+					{
 						mouseX = event.button.x;
 						mouseY = HEIGHT-event.button.y;
 						break;
+					}
 					case SDL_KEYDOWN:
+					{
 						processKeyPress(event.key.keysym.sym);
 						//sprintf(bufferThing, "Last key pressed: %d", event.key.keysym.sym);
 						break;
+					}
 					case SDL_KEYUP:
+					{
 						processKeyRelease(event.key.keysym.sym);
 						break;
+					}
 					case SDL_USEREVENT:
+					{
 						//Keyboard
 						TickKeyboard();
 
@@ -264,8 +280,8 @@ int main(int argc, char *argv[])
 								//NEW RECT. add the one after to that one and REUSE IT LATER
 								SDL_Rect dest_pos =
 								{
-									i*256+renderer.renderDistanceX*256-camera.entity->position.x*16,
-									HEIGHT-j*256-renderer.renderDistanceX*256+camera.entity->position.y*16
+									(Sint16)(i*256+renderer.renderDistanceX*256-camera.entity->position.x*16),
+									(Sint16)(HEIGHT-j*256-renderer.renderDistanceX*256+camera.entity->position.y*16)
 								};
 								SDL_BlitSurface(world[WORLD_CENTER+i][WORLD_CENTER+j]->sprite, NULL, screen, &dest_pos);
 							}
@@ -298,7 +314,7 @@ int main(int argc, char *argv[])
 							boxColor(screen, (WIDTH-9*50)/2+i*50, HEIGHT, (WIDTH-9*50)/2+i*50 + 50, HEIGHT - 50, 0x88888888);
 							if (player->inventory[i][0].id != 0 && player->inventory[i][0].id < 8)
 							{
-								SDL_Rect dest_pos = { (WIDTH-9*50)/2+i*50, HEIGHT - 50, 0, 0 };
+								SDL_Rect dest_pos = {(Sint16) ((WIDTH-9*50)/2+i*50), (Sint16)(HEIGHT) - 50, 0, 0 };
 								SDL_BlitSurface(blockImage[player->inventory[i][0].id], NULL, screen, &dest_pos);
 								stringColor(screen, (WIDTH-9*50)/2+i*50, HEIGHT - 10, intToString(player->inventory[i][0].amount), 0xFFFFFFFF);
 							}
@@ -352,10 +368,43 @@ int main(int argc, char *argv[])
 							stringColor(screen, 0, 60, textBuffer, 0xFFFFFFFF);
 						}
 
+						Uint32 now = SDL_GetTicks();
+						Uint32 elapsed = now - lastFrameTime;
+
+						lastFrameTime = now;
+
+						frameMs = (float)elapsed;
+
+						if (elapsed > 0)
+							fps = 1000.0f / elapsed;
+
+						fps_array[fps_index]=fps;
+
+						if(fps_index == 255)
+						{
+							for (int i = 0; i < 256; i++)
+								avg_fps += fps_array[i];
+							avg_fps/=256.0f;
+						}
+
+						fps_index++;
+						fps_index %=256;
+
+						char textBuffer[256];
+						sprintf(textBuffer, "FPS: %.2f", fps);
+						stringColor(screen, WIDTH-strlen(textBuffer-1) * 8, 15, textBuffer, 0xFFFFFFFF);
+						sprintf(textBuffer, "Avg. FPS: %.2f", avg_fps);
+						stringColor(screen, WIDTH-strlen(textBuffer-1) * 8, 25, textBuffer, 0xFFFFFFFF);
+						sprintf(textBuffer, "Frame Time: %.2f", frameMs);
+						stringColor(screen, WIDTH-strlen(textBuffer-1) * 8, 35, textBuffer, 0xFFFFFFFF);
+
 						break;
+					}
 					case SDL_QUIT:
+					{
 						game_loop = false;
 						break;
+					}
 				}
 				SDL_Flip(screen);
 				break;

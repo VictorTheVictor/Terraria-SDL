@@ -22,7 +22,7 @@ static const BlockProperty blockProperty[BLOCK_ID_MAX] =
 	[DIRT] = {1.0f},
 	[GRASS] = {1.0f},
 	[STONE] = {1.0f},
-	[AIR] = {0.5f},
+	[WATER] = {0.5f},
 };
 
 #endif // BLOCKS_H

@@ -10,32 +10,66 @@
 #include "entity_type.h"
 
 #define POS_ZERO ((Position){0.0f,0.0f})
-#define POS_XY(x) ((Position){(float)(x),(float)(x)})
+#define POS(x) ((Position){(float)(x),(float)(x)})
 #define POS_SET(x,y) ((Position){(float)(x),(float)(y)})
+
+struct Position
+{
+        float x, y;
+        Position(float _x, float _y) : x(_x), y(_y) {}
+        Position(float _a) : x(_a), y(_a) {}
+        Position() : x(0), y(0) {}
+};
 
 #define FLOAT_CLAMP(x,max_x) (x)=fmaxf(-max_x,fminf(x,max_x))
 
-#define FORCE_ZERO ((Force){0.0f,0.0f,0.0f})
-#define SPEED(x) ((Force){x,0.0f,0.0f,0.0f})
-
-typedef struct
-{
-        float x, y;
-} Position;
-
-typedef struct
+struct Force
 {
         Position speed;
         Position acceleration;
-        float maxSpeed;
-} Force;
 
-typedef struct Entity
+        float maxSpeed;
+
+        Force(Position _speed, Position _acceleration) :
+        	speed(_speed),
+        	acceleration(_acceleration) {}
+        Force(float _a) :
+        	speed(Position(_a)),
+        	acceleration(Position(_a)) {}
+	Force() :
+		speed(Position(0.0f)),
+		acceleration(Position(0.0f)) {}
+};
+
+struct Entity
 {
         Position position;
 
         Force internal;
         Force external;
+
+
+
+        Entity (Position _position, EntityType _entity_type) :
+		position(_position),
+		internal(0.0f),
+		external(0.0f),
+        	entity_type(_entity_type),
+        	health(entity_property[_entity_type].defaultHealth),
+        	active(1)
+        {
+
+        }
+
+        Entity (Position _position, Force _external, EntityType _entity_type) :
+        	position(_position),
+        	internal(0.0f),
+        	external(_external),
+        	entity_type(_entity_type),
+        	active(1)
+	{
+
+	}
 
         //TODO: make this its own struct and have one for for self movement, one for force movement
 	float width, height;
@@ -43,25 +77,23 @@ typedef struct Entity
 	EntityType entity_type;
 	bool active;
 	Item inventory[9][4];
-} Entity;
+};
 
-typedef struct
+ struct Camera
 {
         Entity* entity;
         Position position;
-} Camera;
 
-Camera spawnCamera(Entity* _entity)
-{
-        Camera camera = {_entity, POS_ZERO};
-        return camera;
-}
+        Camera(Entity* _entity) : entity(_entity), position(Position(0.0f)) {}
+        Camera(Position _position) : position(_position) {}
+} ;
 
-typedef struct
+struct EntityControlSystem
 {
-	int amount;
+	int amount = 0;
 	Entity entity[MAX_ENTITY_POOL];
-} EntityControlSystem;
+	EntityControlSystem() {}
+};
 
 static EntityControlSystem ACTIVE_ECS;
 static EntityControlSystem INACTIVE_ECS;
@@ -87,31 +119,10 @@ int ECS_Find_Next_Entity_Slot(EntityControlSystem* entity_control_system, bool a
 	return -1;
 }
 
-Entity spawnRegularEntity( EntityType _entity_type, Position _position)
-{
-	Entity entity;
-	entity.position = _position;
-	entity.internal = FORCE_ZERO;
-	entity.external = FORCE_ZERO;
-	entity.entity_type = _entity_type;
-	entity.health = entity_property[_entity_type].defaultHealth;
-	entity.active = 1;
-	return entity;
-}
-
-Entity spawnProjectileEntity(Position _position, Position _speed)
-{
-	Entity projectile;
-	projectile.position = _position;
-	projectile.external = SPEED(_speed);
-	projectile.active = 1;
-	return projectile;
-}
-
 Entity* ECS_Spawn(Entity entity)
 {
 	int index = ECS_Find_First_Entity_Slot(&ACTIVE_ECS, 0);
-	printf("Index: %d, Type: %d\n", index, entity.entity_type);
+	//printf("Index: %d, Type: %d\n", index, entity.entity_type);
 	if (index >= 0)
 	{
 		ACTIVE_ECS.entity[index] = entity;

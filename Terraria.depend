@@ -1026,7 +1026,7 @@
 
 1785247756 c:\users\fujiwara\coding\terraria-sdl\src\scene_type.h
 
-1792495439 source:c:\users\fujiwara\coding\c\terraria-sdl\src\main.c
+1792503101 source:c:\users\fujiwara\coding\c\terraria-sdl\src\main.c
 	<time.h>
 	<math.h>
 	<stdbool.h>
@@ -1232,7 +1232,7 @@
 	<SDL.h>
 	<stdbool.h>
 
-1792495870 c:\users\fujiwara\coding\c\terraria-sdl\src\chunk.h
+1792504580 c:\users\fujiwara\coding\c\terraria-sdl\src\chunk.h
 	"glob.h"
 	"texture.h"
 	"renderer.h"
@@ -1256,7 +1256,7 @@
 	<SDL.h>
 	"glob.h"
 
-1792495588 c:\users\fujiwara\coding\c\terraria-sdl\src\entity.h
+1792578418 c:\users\fujiwara\coding\c\terraria-sdl\src\entity.h
 	<stdbool.h>
 	<stdio.h>
 	<math.h>
@@ -1265,9 +1265,155 @@
 
 1791898128 c:\users\fujiwara\coding\c\terraria-sdl\src\item.h
 
-1791898128 c:\users\fujiwara\coding\c\terraria-sdl\src\entity_type.h
+1792504459 c:\users\fujiwara\coding\c\terraria-sdl\src\entity_type.h
 
 1791898128 c:\users\fujiwara\coding\c\terraria-sdl\src\scene_type.h
 
-1792495983 c:\users\fujiwara\coding\c\terraria-sdl\src\blocks.h
+1792573270 c:\users\fujiwara\coding\c\terraria-sdl\src\blocks.h
+
+1792576059 source:c:\users\fujiwara\coding\c\terraria-sdl\src\main.cpp
+	<time.h>
+	<math.h>
+	<stdbool.h>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_gfxPrimitives.h>
+	"input_handling.h"
+	"chunk.h"
+	"scene_type.h"
+	"glob.h"
+
+1787423112 c:\mingw32\include\time.h
+	<crtdefs.h>
+	<sys/timeb.h>
+	<_timeval.h>
+	<pthread_time.h>
+
+1787423112 c:\mingw32\include\crtdefs.h
+	<corecrt.h>
+
+1787423112 c:\mingw32\include\corecrt.h
+	<_mingw.h>
+	<winapifamily.h>
+
+1787423112 c:\mingw32\include\_mingw.h
+	"_mingw_mac.h"
+	"_mingw_secapi.h"
+	"_cygwin.h"
+	<vadefs.h>
+
+1787423112 c:\mingw32\include\_mingw_mac.h
+
+1787423112 c:\mingw32\include\_mingw_secapi.h
+
+1787423112 c:\mingw32\include\_cygwin.h
+	<stddef.h>
+
+1787423112 c:\mingw32\include\stddef.h
+	<crtdefs.h>
+
+1787423112 c:\mingw32\include\vadefs.h
+	<_mingw.h>
+
+1787423112 c:\mingw32\include\winapifamily.h
+
+1787423112 c:\mingw32\include\sys\timeb.h
+	<crtdefs.h>
+	<sec_api/sys/timeb_s.h>
+
+1787423112 c:\mingw32\include\sec_api\sys\timeb_s.h
+	<sys/timeb.h>
+
+1787423112 c:\mingw32\include\_timeval.h
+
+1787423318 c:\mingw32\include\pthread_time.h
+	<sys/timeb.h>
+	"pthread_compat.h"
+
+1787423318 c:\mingw32\include\pthread_compat.h
+
+1787423112 c:\mingw32\include\math.h
+	<crtdefs.h>
+
+1787423112 c:\mingw32\include\stdarg.h
+	<_mingw_stdarg.h>
+
+1787423112 c:\mingw32\include\_mingw_stdarg.h
+	<vadefs.h>
+
+1787423112 c:\mingw32\include\sys\types.h
+	<crtdefs.h>
+	<_mingw_off_t.h>
+
+1787423112 c:\mingw32\include\_mingw_off_t.h
+
+1787423112 c:\mingw32\include\stdio.h
+	<corecrt_stdio_config.h>
+	<_mingw_off_t.h>
+	<swprintf.inl>
+	<sec_api/stdio_s.h>
+
+1787423112 c:\mingw32\include\corecrt_stdio_config.h
+	<corecrt.h>
+
+1787423112 c:\mingw32\include\swprintf.inl
+
+1787423112 c:\mingw32\include\sec_api\stdio_s.h
+	<stdio.h>
+
+1787423112 c:\mingw32\include\stdlib.h
+	<corecrt.h>
+	<corecrt_wstdlib.h>
+	<limits.h>
+	<sec_api/stdlib_s.h>
+	<malloc.h>
+
+1787423112 c:\mingw32\include\corecrt_wstdlib.h
+	<corecrt.h>
+
+1787423112 c:\mingw32\include\limits.h
+	<crtdefs.h>
+
+1787423112 c:\mingw32\include\sec_api\stdlib_s.h
+	<stdlib.h>
+
+1787423112 c:\mingw32\include\malloc.h
+	<crtdefs.h>
+	<mm_malloc.h>
+
+1787423112 c:\mingw32\include\memory.h
+	<crtdefs.h>
+
+1787423112 c:\mingw32\include\string.h
+	<crtdefs.h>
+	<sec_api/string_s.h>
+
+1787423112 c:\mingw32\include\sec_api\string_s.h
+	<string.h>
+
+1787423112 c:\mingw32\include\strings.h
+	<string.h>
+
+1787423112 c:\mingw32\include\inttypes.h
+	<crtdefs.h>
+	<stdint.h>
+	<stddef.h>
+
+1787423112 c:\mingw32\include\stdint.h
+	<crtdefs.h>
+	<stddef.h>
+
+1787423112 c:\mingw32\include\ctype.h
+	<corecrt_wctype.h>
+
+1787423112 c:\mingw32\include\corecrt_wctype.h
+	<corecrt.h>
+
+1787423112 c:\mingw32\include\process.h
+	<crtdefs.h>
+	<corecrt_startup.h>
+	<sys/types.h>
+
+1787423112 c:\mingw32\include\corecrt_startup.h
+	<corecrt.h>
 

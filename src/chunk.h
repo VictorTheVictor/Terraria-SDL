@@ -31,7 +31,7 @@ typedef struct
 Chunk* buildChunk(int x, int y)
 {
 	//printf ("X: %d, Y: %d\n", x, y);
-	Chunk *chunk = malloc(sizeof(Chunk));
+	Chunk *chunk = new Chunk;
 	for(int i = 0; i < 16; i++)
 	{
 		float noise = FractalPerlin1D((float)(REAL_X) * 0.025f, 5, 0.5f);
@@ -94,7 +94,7 @@ Chunk* buildChunk(int x, int y)
 	{
 		for(int j = 0; j < 16; j++)
 		{
-			SDL_Rect dest_pos = { 16*i, 256-16*j-16, 0, 0 };
+			SDL_Rect dest_pos = { (Sint16)(16*i), (Sint16)(256-16*j-16), 0, 0 };
 			if(chunk->block[i][j].id > 0)
 				SDL_BlitSurface(blockImage[chunk->block[i][j].id], NULL, chunk->sprite, &dest_pos);
 		}

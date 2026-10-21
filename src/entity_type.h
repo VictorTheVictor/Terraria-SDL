@@ -13,7 +13,7 @@ typedef struct EntityProperty
 {
 	float width, height;
 	int defaultHealth;
-	int color;
+	uint32_t color;
 } EntityProperty;
 
 static const EntityProperty entity_property[ENTITY_TYPE_COUNT] =
