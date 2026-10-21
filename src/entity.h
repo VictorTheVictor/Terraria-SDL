@@ -17,7 +17,9 @@ struct Position
 {
         float x, y;
         Position(float _x, float _y) : x(_x), y(_y) {}
+        Position(int _x, int _y) : x((int)_x), y((int)_y) {}
         Position(float _a) : x(_a), y(_a) {}
+        Position(int _a) : x((int)_a), y((int)_a) {}
         Position() : x(0), y(0) {}
 };
 
@@ -43,17 +45,15 @@ struct Force
 
 struct Entity
 {
-        Position position;
+        Position position = Position(0.0f);
 
-        Force internal;
-        Force external;
+        Force internal = Force(0.0f);
+        Force external = Force(0.0f);
 
+	bool active = 0;
 
-
-        Entity (Position _position, EntityType _entity_type) :
+        Entity (EntityType _entity_type, Position _position) :
 		position(_position),
-		internal(0.0f),
-		external(0.0f),
         	entity_type(_entity_type),
         	health(entity_property[_entity_type].defaultHealth),
         	active(1)
@@ -61,21 +61,20 @@ struct Entity
 
         }
 
-        Entity (Position _position, Force _external, EntityType _entity_type) :
+        Entity (EntityType _entity_type, Position _position, Force _external) :
         	position(_position),
-        	internal(0.0f),
-        	external(_external),
         	entity_type(_entity_type),
+        	external(_external),
         	active(1)
 	{
 
 	}
 
-        //TODO: make this its own struct and have one for for self movement, one for force movement
+	Entity () {}
+
 	float width, height;
 	int uuid, health;
 	EntityType entity_type;
-	bool active;
 	Item inventory[9][4];
 };
 
@@ -86,98 +85,103 @@ struct Entity
 
         Camera(Entity* _entity) : entity(_entity), position(Position(0.0f)) {}
         Camera(Position _position) : position(_position) {}
-} ;
+};
+
+enum EntityActivity
+{
+	ACTIVE,
+	INACTIVE
+};
 
 struct EntityControlSystem
 {
 	int amount = 0;
 	Entity entity[MAX_ENTITY_POOL];
 	EntityControlSystem() {}
+
+	int ECS_Find_First_Entity_Slot(EntityActivity activity)
+	{
+		for (int i = 0; i < MAX_ENTITY_POOL; i++)
+			if (entity[i].active == activity)
+			{
+				return i;
+			}
+		return -1;
+	}
+
+	int ECS_Find_Next_Entity_Slot(EntityActivity activity, int current_index)
+	{
+		current_index++;
+		for (int i = current_index; i < MAX_ENTITY_POOL + current_index; i++)
+			if (entity[i%MAX_ENTITY_POOL].active == activity)
+			{
+				return i%256;
+			}
+		return -1;
+	}
+
+	Entity* ECS_Spawn(Entity _entity)
+	{
+		int index = ECS_Find_First_Entity_Slot(INACTIVE);
+		//printf("Index: %d, Type: %d\n", index, entity.entity_type);
+		if (index >= 0)
+		{
+			entity[index] = _entity;
+			amount++;
+			return &entity[index];
+		} else return 0;
+	}
+
+	void ECS_Despawn(int index)
+	{
+		entity[index].active = 0;
+		if(index == amount) amount--;
+	}
+
+	void ECS_Deactivate(int ACTIVE_ECS_index)
+	{
+		int free_slot_index = ECS_Find_First_Entity_Slot(INACTIVE);
+		if (free_slot_index >= 0)
+		{
+			entity[free_slot_index] = entity[ACTIVE_ECS_index];
+			if (free_slot_index == amount) amount++;
+		}
+		ECS_Despawn(ACTIVE_ECS_index);
+	}
+
+	void ECS_Tick()
+	{
+		for (int i = 0; i < MAX_ENTITY_POOL; i++)
+		{
+			if (entity[i].active)
+			{
+				entity[i].external.speed.x += entity[i].external.acceleration.x;
+				//FLOAT_CLAMP(entity[i].external.speed.x, entity[i].external.maxSpeed);
+				entity[i].external.speed.y += entity[i].external.acceleration.y;
+				//FLOAT_CLAMP(entity[i].external.speed.y, entity[i].external.maxSpeed);
+
+				entity[i].internal.speed.x *= 0.50;
+				entity[i].internal.speed.y *= 0.50;
+
+				entity[i].internal.speed.x += entity[i].internal.acceleration.x;
+				//FLOAT_CLAMP(entity[i].internal.speed.x, entity[i].internal.maxSpeed);
+				entity[i].internal.speed.y += entity[i].internal.acceleration.y;
+				//FLOAT_CLAMP(entity[i].internal.speed.y, entity[i].internal.maxSpeed);
+
+				Position totalSpeed;
+
+				totalSpeed.x = entity[i].external.speed.x+entity[i].internal.speed.x;
+				totalSpeed.y = entity[i].external.speed.y+entity[i].internal.speed.y;
+
+				entity[i].position.x += totalSpeed.x;
+				entity[i].position.y += totalSpeed.y;
+			}
+		}
+	}
 };
 
 static EntityControlSystem ACTIVE_ECS;
 static EntityControlSystem INACTIVE_ECS;
-
-int ECS_Find_First_Entity_Slot(EntityControlSystem* entity_control_system, bool activity)
-{
-	for (int i = 0; i < MAX_ENTITY_POOL; i++)
-		if (entity_control_system->entity[i].active == activity)
-		{
-			return i;
-		}
-	return -1;
-}
-
-int ECS_Find_Next_Entity_Slot(EntityControlSystem* entity_control_system, bool activity, int current_index)
-{
-	current_index++;
-	for (int i = current_index; i < MAX_ENTITY_POOL + current_index; i++)
-		if (entity_control_system->entity[i%MAX_ENTITY_POOL].active == activity)
-		{
-			return i%256;
-		}
-	return -1;
-}
-
-Entity* ECS_Spawn(Entity entity)
-{
-	int index = ECS_Find_First_Entity_Slot(&ACTIVE_ECS, 0);
-	//printf("Index: %d, Type: %d\n", index, entity.entity_type);
-	if (index >= 0)
-	{
-		ACTIVE_ECS.entity[index] = entity;
-		ACTIVE_ECS.amount++;
-		return &ACTIVE_ECS.entity[index];
-	} else return 0;
-}
-
-void ECS_Despawn(int index)
-{
-	ACTIVE_ECS.entity[index].active = 0;
-	if(index == ACTIVE_ECS.amount) ACTIVE_ECS.amount--;
-}
-
-void ECS_Deactivate(int ACTIVE_ECS_index)
-{
-	int free_slot_index = ECS_Find_First_Entity_Slot(&INACTIVE_ECS, 0);
-	if (free_slot_index >= 0)
-	{
-		INACTIVE_ECS.entity[free_slot_index] = INACTIVE_ECS.entity[ACTIVE_ECS_index];
-		if (free_slot_index == INACTIVE_ECS.amount) INACTIVE_ECS.amount++;
-	}
-	ECS_Despawn(ACTIVE_ECS_index);
-}
-
-void ECS_Tick()
-{
-	for (int i = 0; i < MAX_ENTITY_POOL; i++)
-	{
-		if (ACTIVE_ECS.entity[i].active)
-		{
-			ACTIVE_ECS.entity[i].external.speed.x += ACTIVE_ECS.entity[i].external.acceleration.x;
-			//FLOAT_CLAMP(ACTIVE_ECS.entity[i].external.speed.x, ACTIVE_ECS.entity[i].external.maxSpeed);
-			ACTIVE_ECS.entity[i].external.speed.y += ACTIVE_ECS.entity[i].external.acceleration.y;
-			//FLOAT_CLAMP(ACTIVE_ECS.entity[i].external.speed.y, ACTIVE_ECS.entity[i].external.maxSpeed);
-
-			ACTIVE_ECS.entity[i].internal.speed.x *= 0.50;
-			ACTIVE_ECS.entity[i].internal.speed.y *= 0.50;
-
-			ACTIVE_ECS.entity[i].internal.speed.x += ACTIVE_ECS.entity[i].internal.acceleration.x;
-			//FLOAT_CLAMP(ACTIVE_ECS.entity[i].internal.speed.x, ACTIVE_ECS.entity[i].internal.maxSpeed);
-			ACTIVE_ECS.entity[i].internal.speed.y += ACTIVE_ECS.entity[i].internal.acceleration.y;
-			//FLOAT_CLAMP(ACTIVE_ECS.entity[i].internal.speed.y, ACTIVE_ECS.entity[i].internal.maxSpeed);
-
-			Position totalSpeed;
-
-			totalSpeed.x = ACTIVE_ECS.entity[i].external.speed.x+ACTIVE_ECS.entity[i].internal.speed.x;
-			totalSpeed.y = ACTIVE_ECS.entity[i].external.speed.y+ACTIVE_ECS.entity[i].internal.speed.y;
-
-			ACTIVE_ECS.entity[i].position.x += totalSpeed.x;
-			ACTIVE_ECS.entity[i].position.y += totalSpeed.y;
-		}
-	}
-}
-
 
 void addItemToInventory(Entity *entity, Item item)
 {

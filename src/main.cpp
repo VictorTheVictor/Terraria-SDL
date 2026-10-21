@@ -47,13 +47,13 @@ int main(int argc, char *argv[])
 
 	//FILE *worldFile  = fopen("world.txt", "r+"); //TODO: SAVE FILE
 
-	Entity *player = ECS_Spawn(spawnRegularEntity(PLAYER, POS_SET(0, 32)));
+	Entity *player = ACTIVE_ECS.ECS_Spawn(Entity(PLAYER, Position(0, 32)));
 	playerItemInit(player);
 
 	Camera camera = Camera(player);
 
-	ECS_Spawn(spawnRegularEntity(SLIME, POS(34)));
-	ECS_Spawn(spawnRegularEntity(SLIME, POS(32)));
+	ACTIVE_ECS.ECS_Spawn(Entity(SLIME, Position(34)));
+	ACTIVE_ECS.ECS_Spawn(Entity(SLIME, Position(32)));
 
 	//printf("%d", ACTIVE_ECS.entity[1].x);
 
@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
 						if (key_properties[CAMERA].triggered || camera.entity->active == 0)
 							camera.entity = &ACTIVE_ECS.entity
 							[
-								ECS_Find_Next_Entity_Slot(&ACTIVE_ECS, 1, (int)(camera.entity-ACTIVE_ECS.entity))
+								ACTIVE_ECS.ECS_Find_Next_Entity_Slot(ACTIVE, (int)(camera.entity-ACTIVE_ECS.entity))
 							];
 
 						player->internal.acceleration = POS_ZERO;
@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
 						if(key_properties[RESET_CAMERA].triggered) renderer.standardBlockSize = 16;
 
 						//Physics
-						ECS_Tick();
+						ACTIVE_ECS.ECS_Tick();
 						//Y Movement
 						//TODO: OOP like containerization
 						//canMoveUp = true;
