@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
 						if (key_properties[DEBUG].triggered) debugMode++;
 						debugMode %= 3;
 
-						if (key_properties[CAMERA].triggered || camera.entity->active == 0)
+						if (key_properties[CAMERA].triggered || camera.entity->active == INACTIVE)
 							camera.entity = &ACTIVE_ECS.entity
 							[
 								ACTIVE_ECS.ECS_Find_Next_Entity_Slot(ACTIVE, (int)(camera.entity-ACTIVE_ECS.entity))
@@ -366,37 +366,38 @@ int main(int argc, char *argv[])
 							stringColor(screen, 0, 50, textBuffer, 0xFFFFFFFF);
 							sprintf(textBuffer, "Selected Block X: %d, Selected Block Y: %d", mouseX, mouseY);
 							stringColor(screen, 0, 60, textBuffer, 0xFFFFFFFF);
+
+							Uint32 now = SDL_GetTicks();
+							Uint32 elapsed = now - lastFrameTime;
+
+							lastFrameTime = now;
+
+							frameMs = (float)elapsed;
+
+							if (elapsed > 0)
+								fps = 1000.0f / elapsed;
+
+							fps_array[fps_index]=fps;
+
+							if(fps_index == 255)
+							{
+								avg_fps = 0;
+								for (int i = 0; i < 256; i++)
+									avg_fps += fps_array[i];
+								avg_fps/=256.0f;
+							}
+
+							fps_index++;
+							fps_index %=256;
+
+							sprintf(textBuffer, "FPS: %.2f", fps);
+							stringColor(screen, WIDTH-strlen(textBuffer) * 8 - 8, 15, textBuffer, 0xFFFFFFFF);
+							sprintf(textBuffer, "Avg. FPS: %.2f", avg_fps);
+							stringColor(screen, WIDTH-strlen(textBuffer) * 8 - 8, 25, textBuffer, 0xFFFFFFFF);
+							sprintf(textBuffer, "Frame Time: %.2f", frameMs);
+							stringColor(screen, WIDTH-strlen(textBuffer) * 8 - 8, 35, textBuffer, 0xFFFFFFFF);
 						}
 
-						Uint32 now = SDL_GetTicks();
-						Uint32 elapsed = now - lastFrameTime;
-
-						lastFrameTime = now;
-
-						frameMs = (float)elapsed;
-
-						if (elapsed > 0)
-							fps = 1000.0f / elapsed;
-
-						fps_array[fps_index]=fps;
-
-						if(fps_index == 255)
-						{
-							for (int i = 0; i < 256; i++)
-								avg_fps += fps_array[i];
-							avg_fps/=256.0f;
-						}
-
-						fps_index++;
-						fps_index %=256;
-
-						char textBuffer[256];
-						sprintf(textBuffer, "FPS: %.2f", fps);
-						stringColor(screen, WIDTH-strlen(textBuffer-1) * 8, 15, textBuffer, 0xFFFFFFFF);
-						sprintf(textBuffer, "Avg. FPS: %.2f", avg_fps);
-						stringColor(screen, WIDTH-strlen(textBuffer-1) * 8, 25, textBuffer, 0xFFFFFFFF);
-						sprintf(textBuffer, "Frame Time: %.2f", frameMs);
-						stringColor(screen, WIDTH-strlen(textBuffer-1) * 8, 35, textBuffer, 0xFFFFFFFF);
 
 						break;
 					}

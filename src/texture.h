@@ -9,7 +9,7 @@ void loadTextures()
 {
 	char file_buf[FILENAME_MAX];
 	for (uint32_t file = 0; file < FILENAME_MAX; file++) {
-		snprintf(file_buf, FILENAME_MAX, "%u.bmp", file);
+		snprintf(file_buf, FILENAME_MAX, "res/%u.bmp", file);
 		FILE *final = fopen(file_buf, "r");
 		if (!final) {
 			break;

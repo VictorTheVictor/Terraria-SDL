@@ -43,6 +43,13 @@ struct Force
 		acceleration(Position(0.0f)) {}
 };
 
+
+enum EntityActivity
+{
+	ACTIVE,
+	INACTIVE
+};
+
 struct Entity
 {
         Position position = Position(0.0f);
@@ -50,13 +57,13 @@ struct Entity
         Force internal = Force(0.0f);
         Force external = Force(0.0f);
 
-	bool active = 0;
+	EntityActivity active = INACTIVE;
 
         Entity (EntityType _entity_type, Position _position) :
 		position(_position),
         	entity_type(_entity_type),
         	health(entity_property[_entity_type].defaultHealth),
-        	active(1)
+        	active(ACTIVE)
         {
 
         }
@@ -65,7 +72,7 @@ struct Entity
         	position(_position),
         	entity_type(_entity_type),
         	external(_external),
-        	active(1)
+        	active(ACTIVE)
 	{
 
 	}
@@ -85,12 +92,6 @@ struct Entity
 
         Camera(Entity* _entity) : entity(_entity), position(Position(0.0f)) {}
         Camera(Position _position) : position(_position) {}
-};
-
-enum EntityActivity
-{
-	ACTIVE,
-	INACTIVE
 };
 
 struct EntityControlSystem
@@ -134,7 +135,7 @@ struct EntityControlSystem
 
 	void ECS_Despawn(int index)
 	{
-		entity[index].active = 0;
+		entity[index].active = INACTIVE;
 		if(index == amount) amount--;
 	}
 
@@ -153,7 +154,7 @@ struct EntityControlSystem
 	{
 		for (int i = 0; i < MAX_ENTITY_POOL; i++)
 		{
-			if (entity[i].active)
+			if (entity[i].active == ACTIVE)
 			{
 				entity[i].external.speed.x += entity[i].external.acceleration.x;
 				//FLOAT_CLAMP(entity[i].external.speed.x, entity[i].external.maxSpeed);
@@ -221,6 +222,6 @@ void playerItemInit(Entity *player)
 			}
 		}
 	}
-};
+}
 
 #endif // ENTITY_H_INCLUDED
