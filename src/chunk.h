@@ -103,8 +103,9 @@ Chunk* buildChunk(int x, int y)
 	if (CHUNK_DEBUG)
 	{
 		rectangleColor(chunk->sprite, 0, 0, 256, 256, 0x000000FF);
-		char textBuffer[32];
+		char textBuffer[256];
 		sprintf(textBuffer, "X: %d, Y: %d", x, y);
+		boxColor(chunk->sprite, 0, 0, 100, 10, 0x000000FF);
 		stringColor(chunk->sprite, 10, 10, textBuffer, 0xFFFFFFFF);
 	}
 

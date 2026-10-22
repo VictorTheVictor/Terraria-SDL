@@ -60,18 +60,18 @@ typedef struct
 
 static keyProperties key_properties[ACTION_COUNT] =
 {
-	[MOVE_LEFT] = 		{false, false, false, false, 0, 0, ON_HOLD, SDLK_a},
-	[MOVE_RIGHT] = 		{false, false, false, false, 0, 0, ON_HOLD, SDLK_d},
+	[MOVE_LEFT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_a},
+	[MOVE_RIGHT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_d},
 	[JUMP] = 				{false, false, false, false, 0, 0, ON_HOLD, SDLK_SPACE},
-	[CROUCH] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_LSHIFT},
-	[SPRINT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_LCTRL},
+	[CROUCH] = 				{false, false, false, false, 0, 0, ON_HOLD, SDLK_LSHIFT},
+	[SPRINT] = 				{false, false, false, false, 0, 0, ON_HOLD, SDLK_LCTRL},
 	[ZOOM_IN] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_UP},
 	[ZOOM_OUT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_DOWN},
 
-	[INVENTORY] = 		{false, false, false, false, 0, 0, ON_REPEAT, SDLK_e},
-	[DEBUG] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_F3},
-	[CAMERA] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_F5},
-	[PAUSE] = 			{false, false, false, false, 0, 0, ON_REPEAT, SDLK_ESCAPE},
+	[INVENTORY] = 			{false, false, false, false, 0, 0, ON_REPEAT, SDLK_e},
+	[DEBUG] = 				{false, false, false, false, 0, 0, ON_PRESS, SDLK_F3},
+	[CAMERA] = 				{false, false, false, false, 0, 0, ON_PRESS, SDLK_F5},
+	[PAUSE] = 				{false, false, false, false, 0, 0, ON_REPEAT, SDLK_ESCAPE},
 
 	[HOTBAR_1] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_1},
 	[HOTBAR_2] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_2},

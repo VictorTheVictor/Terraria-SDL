@@ -47,13 +47,13 @@ int main(int argc, char *argv[])
 
 	//FILE *worldFile  = fopen("world.txt", "r+"); //TODO: SAVE FILE
 
-	Entity *player = ACTIVE_ECS.ECS_Spawn(Entity(PLAYER, Position(0, 32)));
+	Entity *player = ACTIVE_ECS.Spawn(Entity(PLAYER, Position(0, 32)));
 	playerItemInit(player);
 
 	Camera camera = Camera(player);
 
-	ACTIVE_ECS.ECS_Spawn(Entity(SLIME, Position(34)));
-	ACTIVE_ECS.ECS_Spawn(Entity(SLIME, Position(32)));
+	ACTIVE_ECS.Spawn(Entity(SLIME, Position(34)));
+	ACTIVE_ECS.Spawn(Entity(SLIME, Position(32)));
 
 	//printf("%d", ACTIVE_ECS.entity[1].x);
 
@@ -77,6 +77,8 @@ int main(int argc, char *argv[])
 		{
 			//Title screen
 			case TITLE_SCREEN:
+			{
+
 				SDL_WaitEvent(&event);
 				switch(event.type)
 				{
@@ -92,8 +94,10 @@ int main(int argc, char *argv[])
 				}
 				SDL_Flip(screen);
 				break;
+			}
 			//Game
 			case GAME_SCREEN:
+			{
 				SDL_WaitEvent(&event);
 				char bufferThing[32];
 				switch (event.type)
@@ -163,7 +167,7 @@ int main(int argc, char *argv[])
 						if (key_properties[CAMERA].triggered || camera.entity->active == INACTIVE)
 							camera.entity = &ACTIVE_ECS.entity
 							[
-								ACTIVE_ECS.ECS_Find_Next_Entity_Slot(ACTIVE, (int)(camera.entity-ACTIVE_ECS.entity))
+								ACTIVE_ECS.Find_Next_Entity_Slot(ACTIVE, (int)(camera.entity-ACTIVE_ECS.entity))
 							];
 
 						player->internal.acceleration = POS_ZERO;
@@ -181,7 +185,7 @@ int main(int argc, char *argv[])
 						if(key_properties[RESET_CAMERA].triggered) renderer.standardBlockSize = 16;
 
 						//Physics
-						ACTIVE_ECS.ECS_Tick();
+						ACTIVE_ECS.Tick();
 						//Y Movement
 						//TODO: OOP like containerization
 						//canMoveUp = true;
@@ -295,7 +299,7 @@ int main(int argc, char *argv[])
 							int render_y = ACTIVE_ECS.entity[i].y*renderer.standardBlockSize;
 							boxColor(screen, render_x, HEIGHT-render_y, render_x+renderer.standardBlockSize, HEIGHT-render_y-renderer.standardBlockSize, entity_property[ACTIVE_ECS.entity[i].entity_type].color);
 						}*/
-						for(int i = 0; i < ACTIVE_ECS.amount; i++)
+						for(int i = 0; i < ACTIVE_ECS.last_entity_index; i++)
 						{
 							int x = (ACTIVE_ECS.entity[i].position.x - camera.position.x)*16;
 							int y = (ACTIVE_ECS.entity[i].position.y - camera.position.y)*16;
@@ -409,15 +413,17 @@ int main(int argc, char *argv[])
 				}
 				SDL_Flip(screen);
 				break;
+			}
 			//Pause screen
 			case PAUSE_SCREEN:
+			{
 				SDL_WaitEvent(&event);
 				switch(event.type)
 				{
 					case SDL_KEYDOWN:
 						switch(event.key.keysym.sym)
 						{
-							case 27:
+							case SDLK_ESCAPE:
 								scene_type = GAME_SCREEN;
 								break;
 						}
@@ -433,6 +439,7 @@ int main(int argc, char *argv[])
 				}
 				SDL_Flip(screen);
 				break;
+			}
 		}
 	}
 	//fprintf(worldFile, "%f\n%f\n%f\n%f\n", player->position.x, player->position.y, player->dx, player->dy); //FILE SAVE
