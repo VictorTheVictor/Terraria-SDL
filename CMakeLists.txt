@@ -23,9 +23,9 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O2 -DNDEBUG"
 # SDL dependencies
 find_package(PkgConfig REQUIRED)
 
-pkg_check_modules(SDL REQUIRED IMPORTED_TARGET sdl12_compat)
-pkg_check_modules(SDL_IMAGE REQUIRED IMPORTED_TARGET SDL_image)
-pkg_check_modules(SDL_GFX REQUIRED IMPORTED_TARGET SDL_gfx)
+pkg_check_modules(SDL REQUIRED IMPORTED_TARGET sdl3)
+pkg_check_modules(SDL_IMAGE REQUIRED IMPORTED_TARGET sdl3-image)
+pkg_check_modules(SDL_GFX REQUIRED IMPORTED_TARGET sdl3-gfx)
 
 # Automatically discover all sources and headers
 file(GLOB_RECURSE PROJECT_FILES

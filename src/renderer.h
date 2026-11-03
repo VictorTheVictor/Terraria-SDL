@@ -1,7 +1,7 @@
 #ifndef RENDERER_H_INCLUDED
 #define RENDERER_H_INCLUDED
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
 struct
 {
@@ -15,7 +15,7 @@ SDL_Rect gameSpaceToScreenSpace (int x, int y)
 	return result;
 }
 
-void drawBox(SDL_Surface *screen, int x, int y, int boxSize, int color)
+void drawBox(SDL_Renderer *screen, int x, int y, int boxSize, int color)
 {
 	boxColor(screen, x, HEIGHT-y, x+boxSize, HEIGHT-y-boxSize, color);
 }

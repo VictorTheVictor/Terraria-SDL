@@ -1,9 +1,9 @@
 #ifndef TEXTURE_H_INCLUDED
 #define TEXTURE_H_INCLUDED
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 
-SDL_Surface *blockImage[8];
+SDL_Texture *blockImage[8];
 
 void loadTextures()
 {
@@ -15,7 +15,7 @@ void loadTextures()
 			break;
 		}
 		fclose(final);
-		blockImage[file] = IMG_Load(file_buf);
+		blockImage[file] = IMG_LoadTexture(screen, file_buf);
 	}
 }
 

@@ -1,16 +1,14 @@
 #include <time.h>
 #include <math.h>
 #include <stdbool.h>
-#include <SDL.h>
-#include <SDL_image.h>
-#include <SDL_gfxPrimitives.h>
+#include <SDL3/SDL.h>
+#include <SDL3_image/SDL_image.h>
+#include <SDL3_gfx/SDL3_gfxPrimitives.h>
 
 #include "input_handling.h"
 #include "chunk.h"
 #include "scene_type.h"
 #include "glob.h"
-
-SDL_Surface *screen;
 
 int main(int argc, char *argv[])
 {
@@ -26,11 +24,20 @@ int main(int argc, char *argv[])
 	SDL_Surface *blockImageScaled[8];
 
 	/* init SDL and open a window */
-	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER);
-	screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0, SDL_ANYFORMAT);
-	/* adding a timer for 20 ms; 1000 ms / 20 ms -> 50 fps */
-	SDL_WM_SetCaption("Pixelbuilder", "Pixelbuilder");
+	SDL_Init(SDL_INIT_VIDEO );
 
+	SDL_Window *window = SDL_CreateWindow(
+		"Pixelbuilder",
+		1920,
+		1080,
+		SDL_WINDOW_RESIZABLE
+	);
+
+	screen = SDL_CreateRenderer(
+		window,
+		NULL
+	);
+	/* adding a timer for 20 ms; 1000 ms / 20 ms -> 50 fps */
 	loadTextures();
 
 	//FILE *worldFile  = fopen("world.txt", "r+"); //TODO: SAVE FILE
@@ -54,6 +61,8 @@ int main(int argc, char *argv[])
 	float fps = 0.0f;
 	float frameMs = 0.0f;
 
+	float maxFps = 0.0f;
+
 	int fps_index = 0;
 	float avg_fps = 0.0f;
 	float fps_array[256];
@@ -75,21 +84,18 @@ int main(int argc, char *argv[])
 			//Title screen
 			case TITLE_SCREEN:
 			{
-
+				drawTutorial(screen);
 				SDL_WaitEvent(&event);
 				switch(event.type)
 				{
-					case SDL_MOUSEBUTTONDOWN:
+					case SDL_EVENT_MOUSE_BUTTON_DOWN:
 						scene_type = GAME_SCREEN;
 						break;
-					case SDL_USEREVENT:
-						drawTutorial(screen);
-						break;
-					case SDL_QUIT:
+					case SDL_EVENT_QUIT:
 						game_loop = false;
 						break;
 				}
-				SDL_Flip(screen);
+				SDL_RenderPresent(screen);
 				break;
 			}
 			//Game
@@ -98,29 +104,29 @@ int main(int argc, char *argv[])
 				SDL_PollEvent(&event);
 				switch (event.type)
 				{
-					case SDL_MOUSEBUTTONDOWN:
+					case SDL_EVENT_MOUSE_BUTTON_DOWN:
 					{
 						break;
 					}
-					case SDL_MOUSEMOTION:
+					case SDL_EVENT_MOUSE_MOTION:
 					{
 						mouse.Tick(scene_type, Point(event.button.x, HEIGHT-event.button.y));
 						break;
 					}
 
-					case SDL_KEYDOWN:
+					case SDL_EVENT_KEY_DOWN:
 					{
-						keyboard.processKeyPress(event.key.keysym.sym);
+						keyboard.processKeyPress(event.key.scancode);
 						break;
 					}
 
-					case SDL_KEYUP:
+					case SDL_EVENT_KEY_UP:
 					{
-						keyboard.processKeyRelease(event.key.keysym.sym);
+						keyboard.processKeyRelease(event.key.scancode);
 						break;
 					}
 
-					case SDL_QUIT:
+					case SDL_EVENT_QUIT:
 					{
 						game_loop = false;
 						break;
@@ -133,33 +139,24 @@ int main(int argc, char *argv[])
 				debugMode %= 3;
 
 				if (keyboard.key_properties[CAMERA].triggered || camera.entity->active == INACTIVE)
-					camera.entity = &ACTIVE_ECS.entity
-					[
-						ACTIVE_ECS.Find_Next_Entity_Slot(ACTIVE, (int)(camera.entity-ACTIVE_ECS.entity))
-					];
+					camera.entity = &ACTIVE_ECS.entity[ ACTIVE_ECS.Find_Next_Entity_Slot(ACTIVE, (int)(camera.entity-ACTIVE_ECS.entity)) ];
 
 				player->internal.acceleration = POS_ZERO;
+
 				if (keyboard.key_properties[MOVE_LEFT].pressed)
-				{
-					player->internal.acceleration.x = -0.5f;
-				}
+					player->internal.acceleration.x -= 0.5f;
+
 				if (keyboard.key_properties[MOVE_RIGHT].pressed)
-				{
-					player->internal.acceleration.x = 0.5f;
-				}
+					player->internal.acceleration.x += 0.5f;
+
 				if (keyboard.key_properties[JUMP].pressed)
-				{
-					player->internal.acceleration.y = +0.5f;
-				}
+					player->internal.acceleration.y += 0.5f;
+
 				if (keyboard.key_properties[CROUCH].pressed)
-				{
-					player->internal.acceleration.y = -0.5f;
-				}
+					player->internal.acceleration.y -= 0.5f;
 
 				if (camera.entity)
-				{
 					camera.position = camera.entity->position;
-				}
 
 				renderer.standardBlockSize += keyboard.key_properties[ZOOM_IN].triggered;
 				renderer.standardBlockSize -= keyboard.key_properties[ZOOM_OUT].triggered;
@@ -178,6 +175,9 @@ int main(int argc, char *argv[])
 				boxColor(screen, 0, 0, WIDTH, HEIGHT, SKY_COLOR);
 
 				//Draw terrain
+
+				SDL_SetRenderTarget(screen, NULL);
+
 				for(int i = -renderer.renderDistanceX; i <= renderer.renderDistanceX; i++)
 				{
 					for(int j = -renderer.renderDistanceY; j <= renderer.renderDistanceY; j++)
@@ -186,14 +186,14 @@ int main(int argc, char *argv[])
 						int y = (camera.position.y)*16;
 						//printf("i: %d, j: %d\n", i, j);
 						//NEW RECT. add the one after to that one and REUSE IT LATER
-						SDL_Rect dest_pos =
+						SDL_FRect dest_pos =
 						{
 							(Sint16)(i*256-camera.entity->position.x*16+WIDTH/2)-8,
 							(Sint16)(HEIGHT-j*256+camera.entity->position.y*16-HEIGHT/2+8),
 							(Sint16)(i*256+256-camera.entity->position.x*16+WIDTH/2-8),
 							(Sint16)(HEIGHT-j*256-256+camera.entity->position.y*16-HEIGHT/2+8)
 						};
-						SDL_BlitSurface(world[WORLD_CENTER+i][WORLD_CENTER+j]->sprite, NULL, screen, &dest_pos);
+						SDL_RenderTexture(screen, world[WORLD_CENTER+i][WORLD_CENTER+j]->sprite, NULL, &dest_pos);
 					}
 				} //YET ANOTHER REFACTOR. LET'S GO //WAIT NO? WE'RE BACK
 
@@ -215,8 +215,8 @@ int main(int argc, char *argv[])
 					boxColor(screen, (WIDTH-9*50)/2+i*50, HEIGHT, (WIDTH-9*50)/2+i*50 + 50, HEIGHT - 50, 0x88888888);
 					if (player->inventory[i][0].id != 0 && player->inventory[i][0].id < 8)
 					{
-						SDL_Rect dest_pos = {(Sint16) ((WIDTH-9*50)/2+i*50), (Sint16)(HEIGHT) - 50, 0, 0 };
-						SDL_BlitSurface(blockImage[player->inventory[i][0].id], NULL, screen, &dest_pos);
+						SDL_FRect dest_pos = {(Sint16) ((WIDTH-9*50)/2+i*50), (Sint16)(HEIGHT) - 50, 0, 0 };
+						SDL_RenderTexture(screen, blockImage[player->inventory[i][0].id], NULL, &dest_pos);
 						stringColor(screen, (WIDTH-9*50)/2+i*50, HEIGHT - 10, intToString(player->inventory[i][0].amount), 0xFFFFFFFF);
 					}
 				}
@@ -256,6 +256,8 @@ int main(int argc, char *argv[])
 
 					fps = deltaTime > 0 ? 1000.0f / deltaTime : 0.0f;
 
+					if (fps > maxFps) maxFps = fps;
+
 					fps_array[fps_index] = fps;
 					fps_index++;
 					fps_index %=256;
@@ -274,8 +276,12 @@ int main(int argc, char *argv[])
 					stringColor(screen, WIDTH-strlen(textBuffer) * 8 - 8, 25, textBuffer, 0xFFFFFFFF);
 					sprintf(textBuffer, "Frame Time: %d ms", (int)deltaTime);
 					stringColor(screen, WIDTH-strlen(textBuffer) * 8 - 8, 35, textBuffer, 0xFFFFFFFF);
+
+					for(int i = 0; i < 256; i++)
+						lineRGBA(screen, WIDTH-256+i, 85, WIDTH-256+i, 85-40*fps_array[i]/maxFps, 255-255*fps_array[i]/maxFps, 255*fps_array[i]/maxFps, 0, 255);
+
 				}
-				SDL_Flip(screen);
+				SDL_RenderPresent(screen);
 				break;
 			}
 			//Pause screen
@@ -284,24 +290,20 @@ int main(int argc, char *argv[])
 				SDL_WaitEvent(&event);
 				switch(event.type)
 				{
-					case SDL_KEYDOWN:
-						switch(event.key.keysym.sym)
+					drawTutorial(screen);
+					case SDL_EVENT_KEY_DOWN:
+						switch(event.key.scancode)
 						{
 							case SDLK_ESCAPE:
 								scene_type = GAME_SCREEN;
 								break;
 						}
 						break;
-					case SDL_MOUSEBUTTONDOWN:
-						break;
-					case SDL_USEREVENT:
-						drawTutorial(screen);
-						break;
-					case SDL_QUIT:
+					case SDL_EVENT_QUIT:
 						game_loop = false;
 						break;
 				}
-				SDL_Flip(screen);
+				SDL_RenderPresent(screen);
 				break;
 			}
 		}

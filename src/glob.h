@@ -1,6 +1,11 @@
 #ifndef GLOB_H_INCLUDED
 #define GLOB_H_INCLUDED
 
+#include <cstdio>
+#include <SDL3/SDL.h>
+
+SDL_Renderer *screen;
+
 #define SKY_COLOR 0x0094FF
 
 #define WIDTH 800

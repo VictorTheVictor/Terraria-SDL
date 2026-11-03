@@ -1,7 +1,7 @@
 #ifndef INPUT_HANDLING_H_INCLUDED
 #define INPUT_HANDLING_H_INCLUDED
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include <stdbool.h>
 
 #include "glob.h"
@@ -67,41 +67,41 @@ struct keyProperties
 	unsigned int next_repeat_tick;
 
 	actionProperties action_properties;
-	SDLKey key;
+	SDL_Scancode key;
 } ;
 
 struct Keyboard
 {
 	keyProperties key_properties[ACTION_COUNT] =
 	{
-		[MOVE_LEFT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_a},
-		[MOVE_RIGHT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_d},
-		[JUMP] = 				{false, false, false, false, 0, 0, ON_HOLD, SDLK_SPACE},
-		[CROUCH] = 				{false, false, false, false, 0, 0, ON_HOLD, SDLK_LSHIFT},
-		[SPRINT] = 				{false, false, false, false, 0, 0, ON_HOLD, SDLK_LCTRL},
-		[ZOOM_IN] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_UP},
-		[ZOOM_OUT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDLK_DOWN},
+		[MOVE_LEFT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDL_SCANCODE_A},
+		[MOVE_RIGHT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDL_SCANCODE_D},
+		[JUMP] = 				{false, false, false, false, 0, 0, ON_HOLD, SDL_SCANCODE_SPACE},
+		[CROUCH] = 				{false, false, false, false, 0, 0, ON_HOLD, SDL_SCANCODE_LSHIFT},
+		[SPRINT] = 				{false, false, false, false, 0, 0, ON_HOLD, SDL_SCANCODE_LCTRL},
+		[ZOOM_IN] = 			{false, false, false, false, 0, 0, ON_HOLD, SDL_SCANCODE_UP},
+		[ZOOM_OUT] = 			{false, false, false, false, 0, 0, ON_HOLD, SDL_SCANCODE_DOWN},
 
-		[INVENTORY] = 			{false, false, false, false, 0, 0, ON_REPEAT, SDLK_e},
-		[DEBUG] = 				{false, false, false, false, 0, 0, ON_PRESS, SDLK_F3},
-		[CAMERA] = 				{false, false, false, false, 0, 0, ON_PRESS, SDLK_F5},
-		[PAUSE] = 				{false, false, false, false, 0, 0, ON_REPEAT, SDLK_ESCAPE},
+		[INVENTORY] = 			{false, false, false, false, 0, 0, ON_REPEAT, SDL_SCANCODE_E},
+		[DEBUG] = 				{false, false, false, false, 0, 0, ON_PRESS, SDL_SCANCODE_F3},
+		[CAMERA] = 				{false, false, false, false, 0, 0, ON_PRESS, SDL_SCANCODE_F5},
+		[PAUSE] = 				{false, false, false, false, 0, 0, ON_REPEAT, SDL_SCANCODE_ESCAPE},
 
-		[HOTBAR_1] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_1},
-		[HOTBAR_2] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_2},
-		[HOTBAR_3] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_3},
-		[HOTBAR_4] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_4},
-		[HOTBAR_5] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_5},
-		[HOTBAR_6] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_6},
-		[HOTBAR_7] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_7},
-		[HOTBAR_8] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_8},
-		[HOTBAR_9] = 			{false, false, false, false, 0, 0, ON_PRESS, SDLK_9},
+		[HOTBAR_1] = 			{false, false, false, false, 0, 0, ON_PRESS, SDL_SCANCODE_1},
+		[HOTBAR_2] = 			{false, false, false, false, 0, 0, ON_PRESS, SDL_SCANCODE_2},
+		[HOTBAR_3] = 			{false, false, false, false, 0, 0, ON_PRESS, SDL_SCANCODE_3},
+		[HOTBAR_4] = 			{false, false, false, false, 0, 0, ON_PRESS, SDL_SCANCODE_4},
+		[HOTBAR_5] = 			{false, false, false, false, 0, 0, ON_PRESS, SDL_SCANCODE_5},
+		[HOTBAR_6] = 			{false, false, false, false, 0, 0, ON_PRESS, SDL_SCANCODE_6},
+		[HOTBAR_7] = 			{false, false, false, false, 0, 0, ON_PRESS, SDL_SCANCODE_7},
+		[HOTBAR_8] = 			{false, false, false, false, 0, 0, ON_PRESS, SDL_SCANCODE_8},
+		[HOTBAR_9] = 			{false, false, false, false, 0, 0, ON_PRESS, SDL_SCANCODE_9},
 
-		[RESPAWN] = 			{false, false, false, false, 0, 0, ON_RELEASE, SDLK_r},
-		[RESET_CAMERA] = 		{false, false, false, false, 0, 0, ON_RELEASE, SDLK_BACKSPACE}
+		[RESPAWN] = 			{false, false, false, false, 0, 0, ON_RELEASE, SDL_SCANCODE_R},
+		[RESET_CAMERA] = 		{false, false, false, false, 0, 0, ON_RELEASE, SDL_SCANCODE_BACKSPACE}
 	};
 
-	void processKeyPress(SDLKey key)
+	void processKeyPress(SDL_Scancode key)
 	{
 		for (int action = 0; action < ACTION_COUNT; action++)
 		{
@@ -116,7 +116,7 @@ struct Keyboard
 		}
 	}
 
-	void processKeyRelease(SDLKey key)
+	void processKeyRelease(SDL_Scancode key)
 	{
 		for (int action = 0; action < ACTION_COUNT; action++)
 		{
