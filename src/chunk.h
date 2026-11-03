@@ -1,6 +1,10 @@
 #ifndef CHUNK_H_INCLUDED
 #define CHUNK_H_INCLUDED
 
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_gfxPrimitives.h>
+
 #include "glob.h"
 #include "texture.h"
 #include "renderer.h"
@@ -65,7 +69,7 @@ Chunk* buildChunk(int x, int y)
 				chunk->block[i][j].lightLevel = 0;*/
 			chunk->block[i][j].lightLevel = 16;
 
-                        if(x == 0) {chunk->block[i][j].id =  GRASS; }
+			if(x == 0) {chunk->block[i][j].id =  GRASS; }
 		}
 	}
 	chunk->sprite = SDL_CreateRGBSurface(
@@ -90,6 +94,7 @@ Chunk* buildChunk(int x, int y)
 		NULL,
 		SDL_MapRGBA(chunk->sprite->format, 0, 0, 0, 0)
 	);
+
 	for(int i = 0; i < 16; i++)
 	{
 		for(int j = 0; j < 16; j++)
@@ -100,12 +105,15 @@ Chunk* buildChunk(int x, int y)
 		}
 	}
 
-	if (CHUNK_DEBUG)
+	if (CHUNK_DEBUG == 1)
 	{
+		for(int i = 0; i < 16; i++)
+			for(int j = 0; j < 16; j++)
+				rectangleColor(chunk->sprite, i*16, j*16, i*16+16, j*16+16, 0x000000FF);
 		rectangleColor(chunk->sprite, 0, 0, 256, 256, 0x000000FF);
+		rectangleColor(chunk->sprite, 1, 1, 255, 255, 0x000000FF);
 		char textBuffer[256];
 		sprintf(textBuffer, "X: %d, Y: %d", x, y);
-		boxColor(chunk->sprite, 0, 0, 100, 10, 0x000000FF);
 		stringColor(chunk->sprite, 10, 10, textBuffer, 0xFFFFFFFF);
 	}
 
@@ -126,10 +134,10 @@ Chunk* deleteChunk(Chunk* chunk)
 
 Chunk *world[WORLD_SIZE][WORLD_SIZE];
 
-void radialChunkPass(int player_x, int player_y)
+void radialChunkPass(float player_x, float player_y)
 {
-	renderer.renderDistanceX = (int)ceilf((float)WIDTH/(16*renderer.standardBlockSize*2));
-	renderer.renderDistanceY = (int)ceilf((float)HEIGHT/(16*renderer.standardBlockSize*2));
+	renderer.renderDistanceX = (int)ceilf(WIDTH/(16*renderer.standardBlockSize*2.0f));
+	renderer.renderDistanceY = (int)ceilf(HEIGHT/(16*renderer.standardBlockSize*2.0f));
 	//printf ("Render X: %d, Render Y: %d\n", renderer.renderDistanceX, renderer.renderDistanceY);
 	int x = 0;
 	int y = 0;

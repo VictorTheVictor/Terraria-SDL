@@ -9,4 +9,11 @@ typedef enum SceneType
 	SCENE_TYPE_COUNT
 } SceneType;
 
+typedef enum DebugType
+{
+	NO_DEBUG,
+	F3_MENU,
+	F3_AND_POSITION,
+	DEBUG_TYPE_COUNT
+} DebugType;
 #endif // SCENE_TYPE_H_INCLUDED

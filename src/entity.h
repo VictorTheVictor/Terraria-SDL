@@ -6,56 +6,33 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <math.h>
+
 #include "item.h"
 #include "entity_type.h"
+#include "glob.h"
 
 #define POS_ZERO ((Position){0.0f,0.0f})
 #define POS(x) ((Position){(float)(x),(float)(x)})
 #define POS_SET(x,y) ((Position){(float)(x),(float)(y)})
 
-#define STRUCT_OP(op) \
-		Position operator op(const Position& p) const { return Position(x op p.x, y op p.y); }
-
-#define STRUCT_ASSIGN_OP(op) \
-		Position& operator op##=(const Position& p) { x op##= p.x; y op##= p.y; return *this; }
-
-#define STRUCT_OP_ALL(op) \
-		STRUCT_OP(op) \
-		STRUCT_ASSIGN_OP(op)
-
-struct Position
-{
-        float x = 0, y = 0;
-
-        Position() = default;
-
-        Position(float _x, float _y) : x(_x), y(_y) {}
-        Position(float _a) : Position(_a, _a) {}
-
-        STRUCT_OP_ALL(+);
-        STRUCT_OP_ALL(-);
-        STRUCT_OP_ALL(*);
-        STRUCT_OP_ALL(/);
-};
-
 #define FLOAT_CLAMP(x,max_x) (x)=fmaxf(-max_x,fminf(x,max_x))
 
 struct Force
 {
-        Position speed;
-        Position acceleration;
+	Position speed;
+	Position acceleration;
 
-        float maxSpeed;
+	float maxSpeed;
 
-        Force(Position _speed, Position _acceleration) :
-        	speed(_speed),
-        	acceleration(_acceleration) {}
-        Force(float _a) :
-        	speed(Position(_a)),
-        	acceleration(Position(_a)) {}
-		Force() :
-			speed(Position(0.0f)),
-			acceleration(Position(0.0f)) {}
+	Force(Position _speed, Position _acceleration) :
+		speed(_speed),
+		acceleration(_acceleration) {}
+	Force(float _a) :
+		speed(Position(_a)),
+		acceleration(Position(_a)) {}
+	Force() :
+		speed(Position(0.0f)),
+		acceleration(Position(0.0f)) {}
 };
 
 
@@ -67,27 +44,27 @@ enum EntityActivity
 
 struct Entity
 {
-        Position position = Position(0.0f);
+	Position position = Position(0.0f);
 
-        Force internal = Force(0.0f);
-        Force external = Force(0.0f);
+	Force internal = Force(0.0f);
+	Force external = Force(0.0f);
 
 	EntityActivity active = INACTIVE;
 
-        Entity (EntityType _entity_type, Position _position) :
+	Entity (EntityType _entity_type, Position _position) :
+	position(_position),
+		entity_type(_entity_type),
+		health(entity_property[_entity_type].defaultHealth),
+		active(ACTIVE)
+	{
+
+	}
+
+	Entity (EntityType _entity_type, Position _position, Force _external) :
 		position(_position),
-        	entity_type(_entity_type),
-        	health(entity_property[_entity_type].defaultHealth),
-        	active(ACTIVE)
-        {
-
-        }
-
-        Entity (EntityType _entity_type, Position _position, Force _external) :
-        	position(_position),
-        	entity_type(_entity_type),
-        	external(_external),
-        	active(ACTIVE)
+		entity_type(_entity_type),
+		external(_external),
+		active(ACTIVE)
 	{
 
 	}
@@ -102,11 +79,11 @@ struct Entity
 
  struct Camera
 {
-        Entity* entity;
-        Position position;
+	Entity* entity;
+	Position position;
 
-        Camera(Entity* _entity) : entity(_entity), position(Position(0.0f)) {}
-        Camera(Position _position) : position(_position) {}
+	Camera(Entity* _entity) : entity(_entity), position(Position(0.0f)) {}
+	Camera(Position _position) : position(_position) {}
 };
 
 struct EntityControlSystem
@@ -181,17 +158,13 @@ struct EntityControlSystem
 		{
 			if (entity[i].active == ACTIVE)
 			{
+				entity[i].internal.speed *= Position(0.5f);
 				entity[i].external.speed += entity[i].external.acceleration;
-				//FLOAT_CLAMP(entity[i].external.speed.x, entity[i].external.maxSpeed);
-				//FLOAT_CLAMP(entity[i].external.speed.y, entity[i].external.maxSpeed);
 
 				entity[i].internal.speed *= Position(0.5f);
-
 				entity[i].internal.speed += entity[i].internal.acceleration;
-				//FLOAT_CLAMP(entity[i].internal.speed.x, entity[i].internal.maxSpeed);
-				//FLOAT_CLAMP(entity[i].internal.speed.y, entity[i].internal.maxSpeed);
 
-				entity[i].position += entity[i].external.speed+entity[i].internal.speed;
+				entity[i].position += (entity[i].external.speed + entity[i].internal.speed);
 			}
 		}
 	}
@@ -214,6 +187,7 @@ void addItemToInventory(Entity *entity, Item item)
 				firstEmptyJ = j;
 				entity->inventory[i][j].amount = 0;
 			}
+
 			if(entity->inventory[i][j].id == item.id)
 				if(entity->inventory[i][j].amount < 999)
 					entity->inventory[i][j].amount += item.amount;
@@ -231,6 +205,7 @@ void playerItemInit(Entity *player)
 		{
 			player->inventory[i][j].id = 0;
 			player->inventory[i][j].amount = 0;
+
 			if(j == 0)
 			{
 				player->inventory[i][j].id = i+1;

@@ -26,12 +26,9 @@ int main(int argc, char *argv[])
 
 	const float GRAVITY = 0.02;
 
-	int debugMode = 1; //0 no debug, 1 variables, 2 screen position/rendering
-	SceneType scene_type = TITLE_SCREEN; //0 title screen/controls, 1 game, 2 pause screen
-	int mouseX = 0;
-	int mouseY = 0;
+	int debugMode = F3_MENU;
+	SceneType scene_type = TITLE_SCREEN;
 	int worldTime = 10;
-	bool canMoveUp, canMoveDown, canMoveLeft, canMoveRight;
 
 	SDL_Event event;
 	SDL_Surface *blockImageScaled[8];
@@ -47,7 +44,7 @@ int main(int argc, char *argv[])
 
 	//FILE *worldFile  = fopen("world.txt", "r+"); //TODO: SAVE FILE
 
-	Entity *player = ACTIVE_ECS.Spawn(Entity(PLAYER, Position(0, 32)));
+	Entity *player = ACTIVE_ECS.Spawn(Entity(PLAYER, Position(0, 0)));
 	playerItemInit(player);
 
 	Camera camera = Camera(player);
@@ -102,87 +99,54 @@ int main(int argc, char *argv[])
 				char bufferThing[32];
 				switch (event.type)
 				{
-					/*{case SDL_MOUSEBUTTONDOWN:
-						if(!inventoryPress)
-						{
-							switch (event.button.button)
-							{
-								struct Blocks currently_selected_block = chunk
-											[(int)((event.button.x - WIDTH/2)/(renderer.blockZoomFactor) + player->position.x + player->width/2) / 16]
-											[(int)((HEIGHT/2 - event.button.y)/(renderer.blockZoomFactor) + player->position.y + player->height/2) / 16].block
-											[(int)((event.button.x - WIDTH/2)/(renderer.blockZoomFactor) + player->position.x + player->width/2) % 16]
-											[(int)((HEIGHT/2 - event.button.y)/(renderer.blockZoomFactor) + player->position.y + player->height/2) % 16];
-								selBlockX = (int)((event.button.x - WIDTH/2)/(renderer.blockZoomFactor) + player->position.x + player->width/2) % 16;
-								selBlockY = (int)((HEIGHT/2 - event.button.y)/(renderer.blockZoomFactor) + player->position.y + player->height/2) % 16;
-								case SDL_BUTTON_LEFT:
-									addItemToInventory(&player, currently_selected_block->id, 1);
-									debugValue = currently_selected_block.id;
-									break;
-								case SDL_BUTTON_RIGHT:
-									if(currently_selected_block.id == 0 &&
-											player->inventory[player->hotbarSelect][0].count > 0)
-									{
-										 currently_selected_block.id = player->inventory[player->hotbarSelect][0].id;
-										 player->inventory[player->hotbarSelect][0].count--;
-										 if(player->inventory[player->hotbarSelect][0].count == 0) player->inventory[player->hotbarSelect][0].id = 0;
-									}
-									break;
-							}
-						}
+					case SDL_MOUSEBUTTONDOWN:
 						break;
-					case SDL_MOUSEBUTTONUP:
-						switch (event.button.button)
-						{
-							case SDL_BUTTON_LEFT:
-								break;
-							case SDL_BUTTON_RIGHT:
-								break;
-						}
-						break;}*/
 					case SDL_MOUSEMOTION:
 					{
-						mouseX = event.button.x;
-						mouseY = HEIGHT-event.button.y;
+						mouse.tick(scene_type, Point(event.button.x, HEIGHT-event.button.y))
 						break;
 					}
+
 					case SDL_KEYDOWN:
 					{
-						processKeyPress(event.key.keysym.sym);
+						keyboard.processKeyPress(event.key.keysym.sym);
 						//sprintf(bufferThing, "Last key pressed: %d", event.key.keysym.sym);
 						break;
 					}
+
 					case SDL_KEYUP:
 					{
-						processKeyRelease(event.key.keysym.sym);
+						keyboard.processKeyRelease(event.key.keysym.sym);
 						break;
 					}
+
 					case SDL_USEREVENT:
 					{
 						//Keyboard
-						TickKeyboard();
+						keyboard.Tick();
 
-						if (key_properties[DEBUG].triggered) debugMode++;
+						if (keyboard.key_properties[DEBUG].triggered) debugMode++;
 						debugMode %= 3;
 
-						if (key_properties[CAMERA].triggered || camera.entity->active == INACTIVE)
+						if (keyboard.key_properties[CAMERA].triggered || camera.entity->active == INACTIVE)
 							camera.entity = &ACTIVE_ECS.entity
 							[
 								ACTIVE_ECS.Find_Next_Entity_Slot(ACTIVE, (int)(camera.entity-ACTIVE_ECS.entity))
 							];
 
 						player->internal.acceleration = POS_ZERO;
-						if (key_properties[MOVE_LEFT].pressed) { player->internal.acceleration.x = -0.5f; }
-						if (key_properties[MOVE_RIGHT].pressed) { player->internal.acceleration.x = 0.5f; }
-						if (key_properties[JUMP].pressed) { player->internal.acceleration.y = +0.5f; }
-						if (key_properties[CROUCH].pressed) { player->internal.acceleration.y = -0.5f; }
+						if (keyboard.key_properties[MOVE_LEFT].pressed) { player->internal.acceleration.x = -0.5f; }
+						if (keyboard.key_properties[MOVE_RIGHT].pressed) { player->internal.acceleration.x = 0.5f; }
+						if (keyboard.key_properties[JUMP].pressed) { player->internal.acceleration.y = +0.5f; }
+						if (keyboard.key_properties[CROUCH].pressed) { player->internal.acceleration.y = -0.5f; }
 
 						if (camera.entity) { camera.position = camera.entity->position; }
 
-						renderer.standardBlockSize += key_properties[ZOOM_IN].triggered;
-						renderer.standardBlockSize -= key_properties[ZOOM_OUT].triggered;
-						if(renderer.standardBlockSize > 100) renderer.standardBlockSize = 100;
-						if(renderer.standardBlockSize < 1) renderer.standardBlockSize = 1;
-						if(key_properties[RESET_CAMERA].triggered) renderer.standardBlockSize = 16;
+						renderer.standardBlockSize += keyboard.key_properties[ZOOM_IN].triggered;
+						renderer.standardBlockSize -= keyboard.key_properties[ZOOM_OUT].triggered;
+						//if(renderer.standardBlockSize > 100) renderer.standardBlockSize = 100;
+						//if(renderer.standardBlockSize < 1) renderer.standardBlockSize = 1;
+						//if(keyboard.key_properties[RESET_CAMERA].triggered) renderer.standardBlockSize = 16;
 
 						//Physics
 						ACTIVE_ECS.Tick();
@@ -278,14 +242,16 @@ int main(int argc, char *argv[])
 						{
 							for(int j = -renderer.renderDistanceY; j <= renderer.renderDistanceY; j++)
 							{
-								int x = (ACTIVE_ECS.entity[i].position.x - camera.position.x)*16;
-								int y = (ACTIVE_ECS.entity[i].position.y - camera.position.y)*16;
+								int x = (camera.position.x)*16;
+								int y = (camera.position.y)*16;
 								//printf("i: %d, j: %d\n", i, j);
 								//NEW RECT. add the one after to that one and REUSE IT LATER
 								SDL_Rect dest_pos =
 								{
-									(Sint16)(i*256+renderer.renderDistanceX*256-camera.entity->position.x*16),
-									(Sint16)(HEIGHT-j*256-renderer.renderDistanceX*256+camera.entity->position.y*16)
+									(Sint16)(i*256-camera.entity->position.x*16+WIDTH/2)-8,
+									(Sint16)(HEIGHT-j*256+camera.entity->position.y*16-HEIGHT/2+8),
+									(Sint16)(i*256+256-camera.entity->position.x*16+WIDTH/2-8),
+									(Sint16)(HEIGHT-j*256-256+camera.entity->position.y*16-HEIGHT/2+8)
 								};
 								SDL_BlitSurface(world[WORLD_CENTER+i][WORLD_CENTER+j]->sprite, NULL, screen, &dest_pos);
 							}
@@ -362,13 +328,13 @@ int main(int argc, char *argv[])
 							stringColor(screen, 0, 10, textBuffer, 0xFFFFFFFF);
 							sprintf(textBuffer, "Target Entity: %d", (int)(camera.entity - ACTIVE_ECS.entity));
 							stringColor(screen, 0, 20, textBuffer, 0xFFFFFFFF);
-							sprintf(textBuffer, "Mouse X: %d, Mouse Y: %d", mouseX, mouseY);
+							sprintf(textBuffer, "Mouse X: %d, Mouse Y: %d", mouse.position.x, mouse.position.y);
 							stringColor(screen, 0, 30, textBuffer, 0xFFFFFFFF);
 							sprintf(textBuffer, "Speed X: %f, Speed Y: %f", player->internal.speed.x, player->internal.speed.y);
 							stringColor(screen, 0, 40, textBuffer, 0xFFFFFFFF);
 							sprintf(textBuffer, "Debug Value: %d", debugValue);
 							stringColor(screen, 0, 50, textBuffer, 0xFFFFFFFF);
-							sprintf(textBuffer, "Selected Block X: %d, Selected Block Y: %d", mouseX, mouseY);
+							sprintf(textBuffer, "Selected Block X: %d, Selected Block Y: %d", mouse.position.x, mouse.position.y);
 							stringColor(screen, 0, 60, textBuffer, 0xFFFFFFFF);
 
 							Uint32 now = SDL_GetTicks();
