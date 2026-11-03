@@ -12,14 +12,6 @@
 
 SDL_Surface *screen;
 
-Uint32 mytimer(Uint32 ms, void *param)
-{
-	SDL_Event ev;
-	ev.type = SDL_USEREVENT;
-	SDL_PushEvent(&ev);
-	return ms;   /* wait this long till next call */
-}
-
 int main(int argc, char *argv[])
 {
 	srand (time(NULL));
@@ -38,7 +30,6 @@ int main(int argc, char *argv[])
 	screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0, SDL_ANYFORMAT);
 	/* adding a timer for 20 ms; 1000 ms / 20 ms -> 50 fps */
 	SDL_WM_SetCaption("Pixelbuilder", "Pixelbuilder");
-	SDL_TimerID id = SDL_AddTimer(17, mytimer, NULL);
 
 	loadTextures();
 
@@ -63,13 +54,22 @@ int main(int argc, char *argv[])
 	float fps = 0.0f;
 	float frameMs = 0.0f;
 
-	char fps_index = 0;
+	int fps_index = 0;
 	float avg_fps = 0.0f;
 	float fps_array[256];
 
 	bool game_loop = true;
+
+	Uint32 lastTicks = SDL_GetTicks();
+
 	while (game_loop)
 	{
+		Uint32 currentTicks = SDL_GetTicks();
+
+		float deltaTick = 60 * (currentTicks - lastTicks) / 1000.0f;
+		float deltaTime = (currentTicks - lastTicks);
+		lastTicks = currentTicks;
+
 		switch(scene_type)
 		{
 			//Title screen
@@ -95,22 +95,22 @@ int main(int argc, char *argv[])
 			//Game
 			case GAME_SCREEN:
 			{
-				SDL_WaitEvent(&event);
-				char bufferThing[32];
+				SDL_PollEvent(&event);
 				switch (event.type)
 				{
 					case SDL_MOUSEBUTTONDOWN:
+					{
 						break;
+					}
 					case SDL_MOUSEMOTION:
 					{
-						mouse.tick(scene_type, Point(event.button.x, HEIGHT-event.button.y))
+						mouse.Tick(scene_type, Point(event.button.x, HEIGHT-event.button.y));
 						break;
 					}
 
 					case SDL_KEYDOWN:
 					{
 						keyboard.processKeyPress(event.key.keysym.sym);
-						//sprintf(bufferThing, "Last key pressed: %d", event.key.keysym.sym);
 						break;
 					}
 
@@ -120,262 +120,160 @@ int main(int argc, char *argv[])
 						break;
 					}
 
-					case SDL_USEREVENT:
-					{
-						//Keyboard
-						keyboard.Tick();
-
-						if (keyboard.key_properties[DEBUG].triggered) debugMode++;
-						debugMode %= 3;
-
-						if (keyboard.key_properties[CAMERA].triggered || camera.entity->active == INACTIVE)
-							camera.entity = &ACTIVE_ECS.entity
-							[
-								ACTIVE_ECS.Find_Next_Entity_Slot(ACTIVE, (int)(camera.entity-ACTIVE_ECS.entity))
-							];
-
-						player->internal.acceleration = POS_ZERO;
-						if (keyboard.key_properties[MOVE_LEFT].pressed) { player->internal.acceleration.x = -0.5f; }
-						if (keyboard.key_properties[MOVE_RIGHT].pressed) { player->internal.acceleration.x = 0.5f; }
-						if (keyboard.key_properties[JUMP].pressed) { player->internal.acceleration.y = +0.5f; }
-						if (keyboard.key_properties[CROUCH].pressed) { player->internal.acceleration.y = -0.5f; }
-
-						if (camera.entity) { camera.position = camera.entity->position; }
-
-						renderer.standardBlockSize += keyboard.key_properties[ZOOM_IN].triggered;
-						renderer.standardBlockSize -= keyboard.key_properties[ZOOM_OUT].triggered;
-						//if(renderer.standardBlockSize > 100) renderer.standardBlockSize = 100;
-						//if(renderer.standardBlockSize < 1) renderer.standardBlockSize = 1;
-						//if(keyboard.key_properties[RESET_CAMERA].triggered) renderer.standardBlockSize = 16;
-
-						//Physics
-						ACTIVE_ECS.Tick();
-						//Y Movement
-						//TODO: OOP like containerization
-						//canMoveUp = true;
-						/*for(int i = 0; i < player->height+1; i++)
-						{
-						{
-							if(chunk[((int)(player->position.x + 0.1 + i*0.9) / 16)]
-									[(int)((player->position.y + player->dy + player->height + 0.05) / 16)].
-							   block[((int)(player->position.x + 0.1 + i*0.9) % 16)]
-									[((int)(player->position.y + player->dy + player->height + 0.05) % 16)].id > 0)
-								canMoveUp = false;
-						}
-						if(!canMoveUp)
-						{
-							if(player->dy > 0) player->dy = 0;
-							player->position.y = round(player->position.y);
-						}
-
-						canMoveDown = true;
-						for(int i = 0; i < player->height+1; i++)
-						{
-							if(chunk[((int)(player->position.x + 0.1 + i*0.9) / 16)]
-									[(int)((player->position.y + player->dy - 0.05) / 16)].
-							   block[((int)(player->position.x + 0.1 + i*0.9) % 16)]
-									[((int)(player->position.y + player->dy - 0.05) % 16)].id > 0)
-								canMoveDown = false;
-						}
-						if(!canMoveDown)
-						{
-							if(player->dy < -0.4) player->health += round(5*(player->dy));
-							player->dy = 0;
-							player->position.y = round(player->position.y);
-							if(jumpPress == 1 && canMoveUp) player->dy = 0.5;
-						}
-						else
-						{
-							player->dy -= GRAVITY;
-						}
-
-						if(canMoveUp || canMoveDown) player->position.y += player->dy;
-
-						//X Movement
-						canMoveLeft = true;
-						for(int i = 0; i < player->width+1; i++)
-						{
-							if(chunk[((int)(player->position.x - 0.05) / 16)]
-									[(int)((player->position.y + i*0.9 + 0.1) / 16)].
-							   block[((int)(player->position.x - 0.05) % 16)]
-									[((int)(player->position.y + i*0.9 + 0.1) % 16)].id > 0 || player->position.x -0.05 < 0)
-									canMoveLeft = false;
-						}
-						if(!canMoveLeft)
-						{
-							player->position.x = round(player->position.x);
-						}
-
-						canMoveRight = true;
-						for(int i = 0; i < player->width+1; i++)
-						{
-							if(chunk[((int)(player->position.x + 0.05 + player->width) / 16)]
-									[(int)((player->position.y + i*0.9 + 0.1) / 16)].
-							   block[((int)(player->position.x + 0.05 + player->width) % 16)]
-									[((int)(player->position.y + i*0.9 + 0.1) % 16)].id > 0 || player->position.x +0.05 > 256)
-									canMoveRight = false;
-						}
-						if(!canMoveRight)
-						{
-							player->position.x = round(player->position.x);
-						}
-
-						if(canMoveLeft && rightPress == 0 && leftPress == 1) player->dx = -0.1;
-						else if(canMoveRight && rightPress == 1 && leftPress == 0) player->dx = 0.1;
-						else player->dx = 0;
-						player->position.x += player->dx*player->dxMod;
-
-						if(player->health <= 0)
-						{
-							player->health = 0;
-							gameLoop = 0;
-							break;
-						}*/
-						//RENDERING
-						//Camera Zoom
-
-						//Draw Sky
-						boxColor(screen, 0, 0, WIDTH, HEIGHT, SKY_COLOR);
-
-						//Draw terrain
-						for(int i = -renderer.renderDistanceX; i <= renderer.renderDistanceX; i++)
-						{
-							for(int j = -renderer.renderDistanceY; j <= renderer.renderDistanceY; j++)
-							{
-								int x = (camera.position.x)*16;
-								int y = (camera.position.y)*16;
-								//printf("i: %d, j: %d\n", i, j);
-								//NEW RECT. add the one after to that one and REUSE IT LATER
-								SDL_Rect dest_pos =
-								{
-									(Sint16)(i*256-camera.entity->position.x*16+WIDTH/2)-8,
-									(Sint16)(HEIGHT-j*256+camera.entity->position.y*16-HEIGHT/2+8),
-									(Sint16)(i*256+256-camera.entity->position.x*16+WIDTH/2-8),
-									(Sint16)(HEIGHT-j*256-256+camera.entity->position.y*16-HEIGHT/2+8)
-								};
-								SDL_BlitSurface(world[WORLD_CENTER+i][WORLD_CENTER+j]->sprite, NULL, screen, &dest_pos);
-							}
-						} //YET ANOTHER REFACTOR. LET'S GO //WAIT NO? WE'RE BACK
-
-						//Draw entities
-						/*
-						for(int i = 0; i < ACTIVE_ECS.amount; i++)
-						{
-							int render_x = ACTIVE_ECS.entity[i].x*renderer.standardBlockSize;
-							int render_y = ACTIVE_ECS.entity[i].y*renderer.standardBlockSize;
-							boxColor(screen, render_x, HEIGHT-render_y, render_x+renderer.standardBlockSize, HEIGHT-render_y-renderer.standardBlockSize, entity_property[ACTIVE_ECS.entity[i].entity_type].color);
-						}*/
-						for(int i = 0; i < ACTIVE_ECS.last_entity_index; i++)
-						{
-							int x = (ACTIVE_ECS.entity[i].position.x - camera.position.x)*16;
-							int y = (ACTIVE_ECS.entity[i].position.y - camera.position.y)*16;
-							boxColor(	screen,
-									WIDTH/2+x-8,
-									HEIGHT/2-y+8,
-									WIDTH/2+x+8,
-									HEIGHT/2-y-8,
-									entity_property[ACTIVE_ECS.entity[i].entity_type].color);
-						}
-						//Draw hotbar
-						/*boxColor(screen, (WIDTH-9*50)/2+player->hotbarSelect*50, HEIGHT,
-										 (WIDTH-9*50)/2+(1+player->hotbarSelect)*50, HEIGHT - 50, 0x000000FF);*/
-						for (int i = 0; i < 9; i++)
-						{
-							boxColor(screen, (WIDTH-9*50)/2+i*50, HEIGHT, (WIDTH-9*50)/2+i*50 + 50, HEIGHT - 50, 0x88888888);
-							if (player->inventory[i][0].id != 0 && player->inventory[i][0].id < 8)
-							{
-								SDL_Rect dest_pos = {(Sint16) ((WIDTH-9*50)/2+i*50), (Sint16)(HEIGHT) - 50, 0, 0 };
-								SDL_BlitSurface(blockImage[player->inventory[i][0].id], NULL, screen, &dest_pos);
-								stringColor(screen, (WIDTH-9*50)/2+i*50, HEIGHT - 10, intToString(player->inventory[i][0].amount), 0xFFFFFFFF);
-							}
-						}
-						//Draw inventory
-						/*if(toggleState[INVENTORY])
-						{
-							for(int j = 0; j < 4; j++)
-							{
-								for(int i = 0; i < 9; i++)
-								{
-									boxColor(screen, (WIDTH-9*50)/2+i*50, HEIGHT -j*50, (WIDTH-9*50)/2+i*50 + 50, HEIGHT -j*50 - 50, 0x88888888);
-									if(player->inventory[i][j].id != 0 && player->inventory[i][j].id < 8)
-									{
-										SDL_Rect dest_pos = { (WIDTH-9*50)/2+i*50, HEIGHT -j*50 - 50, 0, 0 };
-										SDL_BlitSurface(blockImage[player->inventory[i][j].id], NULL, screen, &dest_pos);
-										stringColor(screen, (WIDTH-9*50)/2+i*50, HEIGHT -j*50 - 10, intToString(player->inventory[i][j].count), 0xFFFFFFFF);
-									}
-								}
-							}
-						}*/
-
-						//Health bar
-						stringColor(screen, WIDTH-160, 0, "Health:", 0xFFFFFFFF);
-						boxColor(screen, WIDTH-100, 0, WIDTH, 10, 0x333333FF);
-						boxColor(screen, WIDTH-100, 0, WIDTH-5*(20-player->health), 10, 0xFF3333FF);
-						for(int i = 0; i < 20; i++) rectangleColor(screen, WIDTH-5*(i), 0, WIDTH-5*(i), 10, 0x333333FF);
-
-						//Screen debug info
-						if(debugMode != 0) {
-							//Screen position debugging
-							if(debugMode == 2) {
-								boxColor(screen, 0, 0, WIDTH/2, HEIGHT/2, 0xFF000088);
-								boxColor(screen, WIDTH/2, HEIGHT/2, WIDTH, HEIGHT, 0x0000FF88);
-							}
-							//F3 menu
-							char textBuffer[256];
-							sprintf(textBuffer, "X: %f, Y: %f, Chunk X: %d, Chunk Y: %d", player->position.x, player->position.y, (int)((player->position.x) / 16), (int)((player->position.y) / 16));
-							stringColor(screen, 0, 0, textBuffer, 0xFFFFFFFF);
-							sprintf(textBuffer, "Zoom Level: %d", renderer.standardBlockSize);
-							stringColor(screen, 0, 10, textBuffer, 0xFFFFFFFF);
-							sprintf(textBuffer, "Target Entity: %d", (int)(camera.entity - ACTIVE_ECS.entity));
-							stringColor(screen, 0, 20, textBuffer, 0xFFFFFFFF);
-							sprintf(textBuffer, "Mouse X: %d, Mouse Y: %d", mouse.position.x, mouse.position.y);
-							stringColor(screen, 0, 30, textBuffer, 0xFFFFFFFF);
-							sprintf(textBuffer, "Speed X: %f, Speed Y: %f", player->internal.speed.x, player->internal.speed.y);
-							stringColor(screen, 0, 40, textBuffer, 0xFFFFFFFF);
-							sprintf(textBuffer, "Debug Value: %d", debugValue);
-							stringColor(screen, 0, 50, textBuffer, 0xFFFFFFFF);
-							sprintf(textBuffer, "Selected Block X: %d, Selected Block Y: %d", mouse.position.x, mouse.position.y);
-							stringColor(screen, 0, 60, textBuffer, 0xFFFFFFFF);
-
-							Uint32 now = SDL_GetTicks();
-							Uint32 elapsed = now - lastFrameTime;
-
-							lastFrameTime = now;
-
-							frameMs = (float)elapsed;
-
-							if (elapsed > 0)
-								fps = 1000.0f / elapsed;
-
-							fps_array[fps_index]=fps;
-
-							if(fps_index == 255)
-							{
-								avg_fps = 0;
-								for (int i = 0; i < 256; i++)
-									avg_fps += fps_array[i];
-								avg_fps/=256.0f;
-							}
-
-							fps_index++;
-							fps_index %=256;
-
-							sprintf(textBuffer, "FPS: %.2f", fps);
-							stringColor(screen, WIDTH-strlen(textBuffer) * 8 - 8, 15, textBuffer, 0xFFFFFFFF);
-							sprintf(textBuffer, "Avg. FPS: %.2f", avg_fps);
-							stringColor(screen, WIDTH-strlen(textBuffer) * 8 - 8, 25, textBuffer, 0xFFFFFFFF);
-							sprintf(textBuffer, "Frame Time: %.2f", frameMs);
-							stringColor(screen, WIDTH-strlen(textBuffer) * 8 - 8, 35, textBuffer, 0xFFFFFFFF);
-						}
-
-
-						break;
-					}
 					case SDL_QUIT:
 					{
 						game_loop = false;
 						break;
 					}
+				}
+
+				keyboard.Tick();
+
+				if (keyboard.key_properties[DEBUG].triggered) debugMode++;
+				debugMode %= 3;
+
+				if (keyboard.key_properties[CAMERA].triggered || camera.entity->active == INACTIVE)
+					camera.entity = &ACTIVE_ECS.entity
+					[
+						ACTIVE_ECS.Find_Next_Entity_Slot(ACTIVE, (int)(camera.entity-ACTIVE_ECS.entity))
+					];
+
+				player->internal.acceleration = POS_ZERO;
+				if (keyboard.key_properties[MOVE_LEFT].pressed)
+				{
+					player->internal.acceleration.x = -0.5f;
+				}
+				if (keyboard.key_properties[MOVE_RIGHT].pressed)
+				{
+					player->internal.acceleration.x = 0.5f;
+				}
+				if (keyboard.key_properties[JUMP].pressed)
+				{
+					player->internal.acceleration.y = +0.5f;
+				}
+				if (keyboard.key_properties[CROUCH].pressed)
+				{
+					player->internal.acceleration.y = -0.5f;
+				}
+
+				if (camera.entity)
+				{
+					camera.position = camera.entity->position;
+				}
+
+				renderer.standardBlockSize += keyboard.key_properties[ZOOM_IN].triggered;
+				renderer.standardBlockSize -= keyboard.key_properties[ZOOM_OUT].triggered;
+				//if(renderer.standardBlockSize > 100) renderer.standardBlockSize = 100;
+				//if(renderer.standardBlockSize < 1) renderer.standardBlockSize = 1;
+				//if(keyboard.key_properties[RESET_CAMERA].triggered) renderer.standardBlockSize = 16;
+
+				//Physics
+				ACTIVE_ECS.Tick(deltaTick);
+				//Y Movement
+				//TODO: OOP like containerization
+				//RENDERING
+				//Camera Zoom
+
+				//Draw Sky
+				boxColor(screen, 0, 0, WIDTH, HEIGHT, SKY_COLOR);
+
+				//Draw terrain
+				for(int i = -renderer.renderDistanceX; i <= renderer.renderDistanceX; i++)
+				{
+					for(int j = -renderer.renderDistanceY; j <= renderer.renderDistanceY; j++)
+					{
+						int x = (camera.position.x)*16;
+						int y = (camera.position.y)*16;
+						//printf("i: %d, j: %d\n", i, j);
+						//NEW RECT. add the one after to that one and REUSE IT LATER
+						SDL_Rect dest_pos =
+						{
+							(Sint16)(i*256-camera.entity->position.x*16+WIDTH/2)-8,
+							(Sint16)(HEIGHT-j*256+camera.entity->position.y*16-HEIGHT/2+8),
+							(Sint16)(i*256+256-camera.entity->position.x*16+WIDTH/2-8),
+							(Sint16)(HEIGHT-j*256-256+camera.entity->position.y*16-HEIGHT/2+8)
+						};
+						SDL_BlitSurface(world[WORLD_CENTER+i][WORLD_CENTER+j]->sprite, NULL, screen, &dest_pos);
+					}
+				} //YET ANOTHER REFACTOR. LET'S GO //WAIT NO? WE'RE BACK
+
+				//Draw entities
+				for(int i = 0; i < ACTIVE_ECS.last_entity_index; i++)
+				{
+					int x = (ACTIVE_ECS.entity[i].position.x - camera.position.x)*16;
+					int y = (ACTIVE_ECS.entity[i].position.y - camera.position.y)*16;
+					boxColor(	screen,
+						WIDTH/2+x-8,
+								HEIGHT/2-y+8,
+								WIDTH/2+x+8,
+								HEIGHT/2-y-8,
+								entity_property[ACTIVE_ECS.entity[i].entity_type].color);
+				}
+				//Draw hotbar
+				for (int i = 0; i < 9; i++)
+				{
+					boxColor(screen, (WIDTH-9*50)/2+i*50, HEIGHT, (WIDTH-9*50)/2+i*50 + 50, HEIGHT - 50, 0x88888888);
+					if (player->inventory[i][0].id != 0 && player->inventory[i][0].id < 8)
+					{
+						SDL_Rect dest_pos = {(Sint16) ((WIDTH-9*50)/2+i*50), (Sint16)(HEIGHT) - 50, 0, 0 };
+						SDL_BlitSurface(blockImage[player->inventory[i][0].id], NULL, screen, &dest_pos);
+						stringColor(screen, (WIDTH-9*50)/2+i*50, HEIGHT - 10, intToString(player->inventory[i][0].amount), 0xFFFFFFFF);
+					}
+				}
+				//Draw inventory
+
+				//Health bar
+				stringColor(screen, WIDTH-160, 0, "Health:", 0xFFFFFFFF);
+				boxColor(screen, WIDTH-100, 0, WIDTH, 10, 0x333333FF);
+				boxColor(screen, WIDTH-100, 0, WIDTH-5*(20-player->health), 10, 0xFF3333FF);
+				for(int i = 0; i < 20; i++) rectangleColor(screen, WIDTH-5*(i), 0, WIDTH-5*(i), 10, 0x333333FF);
+
+				//Screen debug info
+				if(debugMode != 0)
+				{
+					//Screen position debugging
+					if(debugMode == 2)
+					{
+						boxColor(screen, 0, 0, WIDTH/2, HEIGHT/2, 0xFF000088);
+						boxColor(screen, WIDTH/2, HEIGHT/2, WIDTH, HEIGHT, 0x0000FF88);
+					}
+					//F3 menu
+					char textBuffer[256];
+					sprintf(textBuffer, "X: %f, Y: %f, Chunk X: %d, Chunk Y: %d", player->position.x, player->position.y, CHUNK_POS(player->position.x), CHUNK_POS(player->position.y));
+					stringColor(screen, 0, 0, textBuffer, 0xFFFFFFFF);
+					sprintf(textBuffer, "Zoom Level: %d", renderer.standardBlockSize);
+					stringColor(screen, 0, 10, textBuffer, 0xFFFFFFFF);
+					sprintf(textBuffer, "Target Entity: %d", (int)(camera.entity - ACTIVE_ECS.entity));
+					stringColor(screen, 0, 20, textBuffer, 0xFFFFFFFF);
+					sprintf(textBuffer, "Mouse X: %d, Mouse Y: %d", mouse.position.x, mouse.position.y);
+					stringColor(screen, 0, 30, textBuffer, 0xFFFFFFFF);
+					sprintf(textBuffer, "Speed X: %f, Speed Y: %f", player->internal.speed.x, player->internal.speed.y);
+					stringColor(screen, 0, 40, textBuffer, 0xFFFFFFFF);
+					sprintf(textBuffer, "Debug Value: %d", debugValue);
+					stringColor(screen, 0, 50, textBuffer, 0xFFFFFFFF);
+					sprintf(textBuffer, "Selected Block X: %d, Selected Block Y: %d", mouse.position.x, mouse.position.y);
+					stringColor(screen, 0, 60, textBuffer, 0xFFFFFFFF);
+
+					fps = deltaTime > 0 ? 1000.0f / deltaTime : 0.0f;
+
+					fps_array[fps_index] = fps;
+					fps_index++;
+					fps_index %=256;
+
+					if(fps_index == 0)
+					{
+						avg_fps = 0;
+						for(int i = 0; i < 256; i++)
+							avg_fps += fps_array[i];
+						avg_fps /= 256.0f;
+					}
+
+					sprintf(textBuffer, "FPS: %d", (int)fps);
+					stringColor(screen, WIDTH-strlen(textBuffer) * 8 - 8, 15, textBuffer, 0xFFFFFFFF);
+					sprintf(textBuffer, "Avg. FPS: %.2f", avg_fps);
+					stringColor(screen, WIDTH-strlen(textBuffer) * 8 - 8, 25, textBuffer, 0xFFFFFFFF);
+					sprintf(textBuffer, "Frame Time: %d ms", (int)deltaTime);
+					stringColor(screen, WIDTH-strlen(textBuffer) * 8 - 8, 35, textBuffer, 0xFFFFFFFF);
 				}
 				SDL_Flip(screen);
 				break;
@@ -410,7 +308,6 @@ int main(int argc, char *argv[])
 	}
 	//fprintf(worldFile, "%f\n%f\n%f\n%f\n", player->position.x, player->position.y, player->dx, player->dy); //FILE SAVE
 
-	SDL_RemoveTimer(id);
 	SDL_Quit();
 	return 0;
 }

@@ -152,7 +152,7 @@ struct EntityControlSystem
 		Despawn(ACTIVE_ECS_index);
 	}
 
-	void Tick()
+	void Tick(float deltaTime)
 	{
 		for (int i = 0; i < last_entity_index; i++)
 		{
@@ -164,7 +164,7 @@ struct EntityControlSystem
 				entity[i].internal.speed *= Position(0.5f);
 				entity[i].internal.speed += entity[i].internal.acceleration;
 
-				entity[i].position += (entity[i].external.speed + entity[i].internal.speed);
+				entity[i].position += (entity[i].external.speed + entity[i].internal.speed)*Position(deltaTime);
 			}
 		}
 	}
