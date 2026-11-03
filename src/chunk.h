@@ -13,7 +13,7 @@
 #include "entity.h"
 #include "blocks.h"
 
-#define CHUNK_DEBUG 1
+#define CHUNK_DEBUG 0
 
 typedef struct
 {
@@ -90,7 +90,7 @@ Chunk* buildChunk(int x, int y)
 	{
 		for(int j = 0; j < 16; j++)
 		{
-			SDL_FRect dest_pos = { (Sint16)(16*i), (Sint16)(256-16*j-16), 0, 0 };
+			SDL_FRect dest_pos = { (float)(16*i), (float)(256-16*j-16), (float)16, (float)16 };
 			if(chunk->block[i][j].id > 0)
 				SDL_RenderTexture(screen, blockImage[chunk->block[i][j].id], NULL, &dest_pos);
 		}

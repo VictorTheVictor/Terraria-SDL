@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
 
 	SDL_Window *window = SDL_CreateWindow(
 		"Pixelbuilder",
-		1920,
-		1080,
+		WIDTH,
+		HEIGHT,
 		SDL_WINDOW_RESIZABLE
 	);
 
@@ -172,11 +172,13 @@ int main(int argc, char *argv[])
 				//Camera Zoom
 
 				//Draw Sky
-				boxColor(screen, 0, 0, WIDTH, HEIGHT, SKY_COLOR);
+				SDL_SetRenderTarget(screen, NULL);
+				SDL_SetRenderDrawColor(screen, 00, 0x94, 255, 255);
+				SDL_RenderClear(screen);
+
 
 				//Draw terrain
 
-				SDL_SetRenderTarget(screen, NULL);
 
 				for(int i = -renderer.renderDistanceX; i <= renderer.renderDistanceX; i++)
 				{
@@ -188,10 +190,10 @@ int main(int argc, char *argv[])
 						//NEW RECT. add the one after to that one and REUSE IT LATER
 						SDL_FRect dest_pos =
 						{
-							(Sint16)(i*256-camera.entity->position.x*16+WIDTH/2)-8,
-							(Sint16)(HEIGHT-j*256+camera.entity->position.y*16-HEIGHT/2+8),
-							(Sint16)(i*256+256-camera.entity->position.x*16+WIDTH/2-8),
-							(Sint16)(HEIGHT-j*256-256+camera.entity->position.y*16-HEIGHT/2+8)
+							(float)(i*256-camera.entity->position.x*16+WIDTH/2)-8,
+							(float)(HEIGHT-j*256+camera.entity->position.y*16-HEIGHT/2+8),
+							(float)(256),
+							(float)(256)
 						};
 						SDL_RenderTexture(screen, world[WORLD_CENTER+i][WORLD_CENTER+j]->sprite, NULL, &dest_pos);
 					}
