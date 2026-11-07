@@ -26,6 +26,26 @@ int main(int argc, char *argv[])
 	/* init SDL and open a window */
 	SDL_Init(SDL_INIT_VIDEO );
 
+	int maxWidth = 0;
+	int maxHeight = 0;
+
+	int displayCount = 0;
+	SDL_DisplayID *displays = SDL_GetDisplays(&displayCount);
+	if(!displayCount) return 1;
+
+    for(int i = 0; i < displayCount; i++)
+    {
+        const SDL_DisplayMode *mode = SDL_GetCurrentDisplayMode(displays[i]);
+
+        if(mode->w > maxWidth)
+            maxWidth = mode->w;
+
+        if(mode->h > maxHeight)
+            maxHeight = mode->h;
+    }
+
+    SDL_free(displays);
+
 	SDL_Window *window = SDL_CreateWindow(
 		"Pixelbuilder",
 		WIDTH,
@@ -33,11 +53,7 @@ int main(int argc, char *argv[])
 		SDL_WINDOW_RESIZABLE
 	);
 
-	screen = SDL_CreateRenderer(
-		window,
-		NULL
-	);
-	/* adding a timer for 20 ms; 1000 ms / 20 ms -> 50 fps */
+	screen = SDL_CreateRenderer(window, NULL);
 	loadTextures();
 
 	//FILE *worldFile  = fopen("world.txt", "r+"); //TODO: SAVE FILE
@@ -49,8 +65,6 @@ int main(int argc, char *argv[])
 
 	ACTIVE_ECS.Spawn(Entity(SLIME, Position(34)));
 	ACTIVE_ECS.Spawn(Entity(SLIME, Position(32)));
-
-	//printf("%d", ACTIVE_ECS.entity[1].x);
 
 	renderer.standardBlockSize = 16;
 
@@ -205,7 +219,7 @@ int main(int argc, char *argv[])
 					int x = (ACTIVE_ECS.entity[i].position.x - camera.position.x)*16;
 					int y = (ACTIVE_ECS.entity[i].position.y - camera.position.y)*16;
 					boxColor(	screen,
-						WIDTH/2+x-8,
+								WIDTH/2+x-8,
 								HEIGHT/2-y+8,
 								WIDTH/2+x+8,
 								HEIGHT/2-y-8,
@@ -228,8 +242,6 @@ int main(int argc, char *argv[])
 				stringColor(screen, WIDTH-160, 0, "Health:", 0xFFFFFFFF);
 				boxColor(screen, WIDTH-100, 0, WIDTH, 10, 0x333333FF);
 				boxColor(screen, WIDTH-100, 0, WIDTH-5*(20-player->health), 10, 0xFF3333FF);
-				for(int i = 0; i < 20; i++) rectangleColor(screen, WIDTH-5*(i), 0, WIDTH-5*(i), 10, 0x333333FF);
-
 				//Screen debug info
 				if(debugMode != 0)
 				{

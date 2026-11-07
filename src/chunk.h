@@ -13,7 +13,7 @@
 #include "entity.h"
 #include "blocks.h"
 
-#define CHUNK_DEBUG 0
+#define CHUNK_DEBUG 1
 
 typedef struct
 {
@@ -69,7 +69,9 @@ Chunk* buildChunk(int x, int y)
 				chunk->block[i][j].lightLevel = 0;*/
 			chunk->block[i][j].lightLevel = 16;
 
-			if(x == 0) {chunk->block[i][j].id =  GRASS; }
+			if((x != 0) != (y != 0)) {chunk->block[i][j].id =  DIRT; }
+			else if(x == 0 && y == 0) {chunk->block[i][j].id =  GRASS; }
+			else if(x == -1 && y == -1) {chunk->block[i][j].id =  GRASS; }
 		}
 	}
 	chunk->sprite = SDL_CreateTexture(
@@ -85,6 +87,7 @@ Chunk* buildChunk(int x, int y)
 	SDL_SetRenderDrawColor(screen, 0, 0, 0, 0);
 	SDL_RenderClear(screen);
 
+	SDL_SetRenderDrawColor(screen, 0, 0, 0, 255);
 
 	for(int i = 0; i < 16; i++)
 	{
@@ -96,13 +99,21 @@ Chunk* buildChunk(int x, int y)
 		}
 	}
 
-	if (CHUNK_DEBUG == 1)
+	if(CHUNK_DEBUG == 1)
 	{
 		for(int i = 0; i < 16; i++)
 			for(int j = 0; j < 16; j++)
-				rectangleColor(screen, i*16, j*16, i*16+16, j*16+16, 0x000000FF);
-		rectangleColor(screen, 0, 0, 256, 256, 0x000000FF);
-		rectangleColor(screen, 1, 1, 255, 255, 0x000000FF);
+			{
+				SDL_FRect rect = {i*16,j*16,16,16};
+				SDL_RenderRect(screen, &rect);
+			}
+
+		SDL_FRect rect = {0,0,256,256};
+		SDL_RenderRect(screen, &rect);
+
+		rect = {1,1,255,255};
+		SDL_RenderRect(screen, &rect);
+
 		char textBuffer[256];
 		sprintf(textBuffer, "X: %d, Y: %d", x, y);
 		stringColor(screen, 10, 10, textBuffer, 0xFFFFFFFF);
