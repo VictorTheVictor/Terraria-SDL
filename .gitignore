@@ -3,3 +3,5 @@ bin/*
 *.cbp
 *.depend
 *.layout
+.cache/Clangd-cache.lock
+/.cache
