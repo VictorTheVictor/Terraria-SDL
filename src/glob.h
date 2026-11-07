@@ -8,8 +8,11 @@ SDL_Renderer *screen;
 
 #define SKY_COLOR 0x0094FF
 
-#define WIDTH 800
-#define HEIGHT 600
+int WIDTH = 800;
+int HEIGHT = 600;
+
+int maxWidth = 0;
+int maxHeight = 0;
 
 //TODO: CHUNK RENDER LOD SYSTEM BASED ON RESOLUTION
 

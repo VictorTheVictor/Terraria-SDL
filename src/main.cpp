@@ -26,8 +26,6 @@ int main(int argc, char *argv[])
 	/* init SDL and open a window */
 	SDL_Init(SDL_INIT_VIDEO );
 
-	int maxWidth = 0;
-	int maxHeight = 0;
 
 	int displayCount = 0;
 	SDL_DisplayID *displays = SDL_GetDisplays(&displayCount);
@@ -46,12 +44,7 @@ int main(int argc, char *argv[])
 
     SDL_free(displays);
 
-	SDL_Window *window = SDL_CreateWindow(
-		"Pixelbuilder",
-		WIDTH,
-		HEIGHT,
-		SDL_WINDOW_RESIZABLE
-	);
+	SDL_Window *window = SDL_CreateWindow("Pixelbuilder", 800, 600, SDL_WINDOW_RESIZABLE);
 
 	screen = SDL_CreateRenderer(window, NULL);
 	loadTextures();
@@ -63,8 +56,8 @@ int main(int argc, char *argv[])
 
 	Camera camera = Camera(player);
 
-	ACTIVE_ECS.Spawn(Entity(SLIME, Position(34)));
-	ACTIVE_ECS.Spawn(Entity(SLIME, Position(32)));
+	ACTIVE_ECS.Spawn( Entity(SLIME, Position(34)) );
+	ACTIVE_ECS.Spawn( Entity(SLIME, Position(32)) );
 
 	renderer.standardBlockSize = 16;
 
@@ -92,6 +85,8 @@ int main(int argc, char *argv[])
 		float deltaTick = 60 * (currentTicks - lastTicks) / 1000.0f;
 		float deltaTime = (currentTicks - lastTicks);
 		lastTicks = currentTicks;
+
+		SDL_GetWindowSize(window, &WIDTH, &HEIGHT);
 
 		switch(scene_type)
 		{
@@ -205,7 +200,7 @@ int main(int argc, char *argv[])
 						SDL_FRect dest_pos =
 						{
 							(float)(i*256-camera.entity->position.x*16+WIDTH/2)-8,
-							(float)(HEIGHT-j*256+camera.entity->position.y*16-HEIGHT/2+8),
+							(float)(HEIGHT-256-j*256+camera.entity->position.y*16-HEIGHT/2+8),
 							(float)(256),
 							(float)(256)
 						};

@@ -18,9 +18,9 @@ typedef struct EntityProperty
 
 static const EntityProperty entity_property[ENTITY_TYPE_COUNT] =
 {
-	[PLAYER] = {1.0f, 1.0f, 20, 0xFFFFFFFF},
-	[SLIME] = {1.0f, 1.0f, 20, 0x00FFFFFF},
-	[ARROW] = {1.0f, 1.0f, 20, 0x00FFFFFF},
+	[PLAYER] = 	{1.0f, 1.0f, 20, 0xFFFFFFFF},
+	[SLIME] = 	{1.0f, 1.0f, 20, 0xFFFF00FF},
+	[ARROW] = 	{1.0f, 1.0f, 20, 0xFFFF00FF},
 };
 
 #endif // ENTITY_TYPE_H_INCLUDED

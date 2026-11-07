@@ -141,8 +141,8 @@ Chunk *world[WORLD_SIZE][WORLD_SIZE];
 
 void radialChunkPass(float player_x, float player_y)
 {
-	renderer.renderDistanceX = (int)ceilf(WIDTH/(16*renderer.standardBlockSize*2.0f));
-	renderer.renderDistanceY = (int)ceilf(HEIGHT/(16*renderer.standardBlockSize*2.0f));
+	renderer.renderDistanceX = (int)ceilf(maxWidth/(16*renderer.standardBlockSize*2.0f));
+	renderer.renderDistanceY = (int)ceilf(maxHeight/(16*renderer.standardBlockSize*2.0f));
 	//printf ("Render X: %d, Render Y: %d\n", renderer.renderDistanceX, renderer.renderDistanceY);
 	int x = 0;
 	int y = 0;
